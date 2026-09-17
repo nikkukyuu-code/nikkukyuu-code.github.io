@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>nikkukyuu-code — ブラウザゲーム</title>
+<meta name="description" content="ブラウザで遊べる将棋バリアント「歩以外7枚 or 玉取り」をはじめ、個人制作のゲームを公開しています。" />
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1273660625090851" crossorigin="anonymous"></script>
+<style>
+  :root {
+    --bg: #f6f1e8;
+    --ink: #2b1c12;
+    --accent: #8b2a2a;
+    --gold: #c9a227;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.7;
+  }
+  header {
+    padding: 48px 20px 24px;
+    text-align: center;
+    border-bottom: 1px solid #e2d3bc;
+  }
+  header p.kicker {
+    margin: 0 0 8px;
+    letter-spacing: 0.28em;
+    font-size: 0.75rem;
+    color: var(--accent);
+  }
+  h1 { margin: 0; font-size: clamp(1.6rem, 4vw, 2.2rem); font-weight: 700; }
+  main { max-width: 720px; margin: 0 auto; padding: 32px 20px 64px; }
+  .card {
+    background: #fffdf8;
+    border: 1px solid #e2d3bc;
+    border-radius: 16px;
+    padding: 24px;
+  }
+  .card h2 { margin: 0 0 8px; font-size: 1.35rem; }
+  .card p { margin: 0 0 16px; }
+  a.play {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    text-decoration: none;
+    padding: 12px 22px;
+    border-radius: 999px;
+    letter-spacing: 0.08em;
+  }
+  h3 { margin: 28px 0 8px; font-size: 1.05rem; }
+  ul { padding-left: 1.2em; }
+  footer {
+    text-align: center;
+    padding: 24px 20px 40px;
+    font-size: 0.85rem;
+  }
+  footer a { color: var(--accent); }
+</style>
+</head>
+<body>
+  <header>
+    <p class="kicker">NIKKUKYUU-CODE</p>
+    <h1>ブラウザで遊べる個人制作ゲーム</h1>
+  </header>
+  <main>
+    <article class="card">
+      <h2>将棋 — 歩以外7枚 or 玉取り</h2>
+      <p>通常の将棋の動きはそのままに、勝ち方が少し違うブラウザ将棋です。相手の歩以外の駒を7枚取るか、玉を取る（詰める）か、先に達成した側の勝ちです。</p>
+      <p><a class="play" href="./shogi/">ゲームを開く</a></p>
+    </article>
+    <h3>遊び方の要点</h3>
+    <ul>
+      <li>取る対象になるのは香・桂・銀・金・角・飛と、その成駒、およびと金です。</li>
+      <li>歩と玉はトロフィーに数えません。</li>
+      <li>取った駒を打っても、トロフィーの数は減りません。</li>
+      <li>一人でAIと指すほか、部屋番号を使ったネット対戦もできます。</li>
+    </ul>
+    <h3>このサイトについて</h3>
+    <p>個人がブラウザ向けに制作したゲームを公開するためのページです。ルール説明や更新は各ゲームの画面と GitHub リポジトリで行っています。</p>
+  </main>
+  <footer>
+    <a href="./privacy.html">プライバシーポリシー</a>
+    ・
+    <a href="https://github.com/nikkukyuu-code">GitHub</a>
+  </footer>
+</body>
+</html>
