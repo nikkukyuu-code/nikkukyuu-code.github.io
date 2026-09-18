@@ -53,20 +53,13 @@
     border: 1px solid #e2d3bc;
     border-radius: 16px;
     padding: 22px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 16px;
   }
-  .card h3 { margin: 0 0 8px; font-size: 1.25rem; }
-  .card p { margin: 0 0 14px; }
-  .tag {
-    display: inline-block;
-    margin: 0 0 10px;
-    padding: 2px 10px;
-    font-size: 0.75rem;
-    letter-spacing: 0.08em;
-    border-radius: 999px;
-    background: rgba(139, 42, 42, 0.1);
-    color: var(--accent);
-  }
-  .actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .card h3 { margin: 0; font-size: 1.25rem; }
   a.play {
     display: inline-block;
     background: var(--accent);
@@ -75,15 +68,6 @@
     padding: 10px 18px;
     border-radius: 999px;
     letter-spacing: 0.06em;
-  }
-  a.more {
-    display: inline-block;
-    color: var(--accent);
-    text-decoration: none;
-    padding: 10px 16px;
-    border-radius: 999px;
-    border: 1px solid #e2d3bc;
-    letter-spacing: 0.04em;
   }
   .about {
     margin-top: 36px;
@@ -101,33 +85,23 @@
   <header>
     <p class="kicker">NIKKUKYUU-CODE</p>
     <h1>ブラウザで気軽に対戦</h1>
-    <p class="lead">ネット対戦をカジュアルに楽しめるゲームを公開しているサイトです。ルールは各ゲームの説明ページに、本体はその下のフォルダに置いてあります。</p>
+    <p class="lead">ネット対戦をカジュアルに楽しめるゲームを公開しているサイトです。</p>
   </header>
   <main>
     <h2>公開中のゲーム</h2>
     <div class="games">
       <article class="card">
-        <span class="tag">将棋バリアント</span>
         <h3>7GET将棋</h3>
-        <p>通常の将棋の動きはそのままに、歩以外の駒を7枚取るか玉取りで勝ち。AI対戦と部屋番号のネット対戦ができます。</p>
-        <div class="actions">
-          <a class="more" href="./shogi/">説明を見る</a>
-          <a class="play" href="./shogi/game/">遊ぶ</a>
-        </div>
+        <a class="play" href="./shogi/">遊ぶ</a>
       </article>
       <article class="card">
-        <span class="tag">2人対戦</span>
         <h3>ハウスハウス</h3>
-        <p>スマホ向けの2人対戦ブラウザゲームです。説明ページと、その下の <code style="background:#efe6d6;padding:1px 6px;border-radius:4px;">game/</code> に本体があります。</p>
-        <div class="actions">
-          <a class="more" href="./househouse/">説明を見る</a>
-          <a class="play" href="./househouse/game/">遊ぶ</a>
-        </div>
+        <a class="play" href="./househouse/">遊ぶ</a>
       </article>
     </div>
     <section class="about">
       <h2>このサイトについて</h2>
-      <p>個人がブラウザ向けに制作したゲームの公開用ページです。各ゲームのルートは説明、プレイ用ファイルは <code style="background:#efe6d6;padding:1px 6px;border-radius:4px;">game/</code> 以下、という共通の置き方にしています。</p>
+      <p>個人がブラウザ向けに制作したゲームの公開用ページです。「遊ぶ」から各ゲームの説明ページへ進み、そこから本体を開けます。</p>
     </section>
   </main>
   <footer>
