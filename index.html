@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>7GET将棋 — nikkukyuu-code</title>
-<meta name="description" content="ブラウザで遊べる将棋バリアント「7GET将棋」。相手の歩以外の駒を7枚取るか、玉を取る（詰める）か、先に達成した側の勝ちです。" />
+<title>nikkukyuu-code — カジュアルなネット対戦ゲーム</title>
+<meta name="description" content="ネット対戦をカジュアルに楽しめるブラウザゲームを公開しているサイトです。7GET将棋、ハウスハウスなど。" />
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1273660625090851" crossorigin="anonymous"></script>
 <style>
   :root {
@@ -22,7 +22,7 @@
     line-height: 1.7;
   }
   header {
-    padding: 48px 20px 24px;
+    padding: 48px 20px 28px;
     text-align: center;
     border-bottom: 1px solid #e2d3bc;
   }
@@ -33,26 +33,62 @@
     color: var(--accent);
   }
   h1 { margin: 0; font-size: clamp(1.6rem, 4vw, 2.2rem); font-weight: 700; }
+  .lead {
+    max-width: 36em;
+    margin: 14px auto 0;
+    font-size: 1.02rem;
+  }
   main { max-width: 720px; margin: 0 auto; padding: 32px 20px 64px; }
+  h2 {
+    margin: 0 0 16px;
+    font-size: 1.15rem;
+    letter-spacing: 0.06em;
+  }
+  .games {
+    display: grid;
+    gap: 16px;
+  }
   .card {
     background: #fffdf8;
     border: 1px solid #e2d3bc;
     border-radius: 16px;
-    padding: 24px;
+    padding: 22px 24px;
   }
-  .card h2 { margin: 0 0 8px; font-size: 1.35rem; }
-  .card p { margin: 0 0 16px; }
+  .card h3 { margin: 0 0 8px; font-size: 1.25rem; }
+  .card p { margin: 0 0 14px; }
+  .tag {
+    display: inline-block;
+    margin: 0 0 10px;
+    padding: 2px 10px;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    border-radius: 999px;
+    background: rgba(139, 42, 42, 0.1);
+    color: var(--accent);
+  }
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; }
   a.play {
     display: inline-block;
     background: var(--accent);
     color: #fff;
     text-decoration: none;
-    padding: 12px 22px;
+    padding: 10px 18px;
     border-radius: 999px;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
   }
-  h3 { margin: 28px 0 8px; font-size: 1.05rem; }
-  ul { padding-left: 1.2em; }
+  a.more {
+    display: inline-block;
+    color: var(--accent);
+    text-decoration: none;
+    padding: 10px 16px;
+    border-radius: 999px;
+    border: 1px solid #e2d3bc;
+    letter-spacing: 0.04em;
+  }
+  .about {
+    margin-top: 36px;
+    font-size: 0.95rem;
+  }
   footer {
     text-align: center;
     padding: 24px 20px 40px;
@@ -64,23 +100,35 @@
 <body>
   <header>
     <p class="kicker">NIKKUKYUU-CODE</p>
-    <h1>7GET将棋</h1>
+    <h1>ブラウザで気軽に対戦</h1>
+    <p class="lead">ネット対戦をカジュアルに楽しめるゲームを公開しているサイトです。ルールは各ゲームの説明ページに、本体はその下のフォルダに置いてあります。</p>
   </header>
   <main>
-    <article class="card">
-      <h2>7GET将棋 — 歩以外7枚 or 玉取り</h2>
-      <p>通常の将棋の動きはそのままに、勝ち方が少し違うブラウザ将棋です。相手の歩以外の駒を7枚取るか、玉を取る（詰める）か、先に達成した側の勝ちです。</p>
-      <p><a class="play" href="./shogi/">ゲームを開く</a></p>
-    </article>
-    <h3>遊び方の要点</h3>
-    <ul>
-      <li>取る対象になるのは香・桂・銀・金・角・飛と、その成駒、およびと金です。</li>
-      <li>歩と玉はトロフィーに数えません。</li>
-      <li>取った駒を打っても、トロフィーの数は減りません。</li>
-      <li>一人でAIと指すほか、部屋番号を使ったネット対戦もできます。</li>
-    </ul>
-    <h3>このサイトについて</h3>
-    <p>個人がブラウザ向けに制作したゲームを公開するためのページです。ルール説明は本ページとゲーム画面にあります。</p>
+    <h2>公開中のゲーム</h2>
+    <div class="games">
+      <article class="card">
+        <span class="tag">将棋バリアント</span>
+        <h3>7GET将棋</h3>
+        <p>通常の将棋の動きはそのままに、歩以外の駒を7枚取るか玉取りで勝ち。AI対戦と部屋番号のネット対戦ができます。</p>
+        <div class="actions">
+          <a class="more" href="./shogi/">説明を見る</a>
+          <a class="play" href="./shogi/game/">遊ぶ</a>
+        </div>
+      </article>
+      <article class="card">
+        <span class="tag">2人対戦</span>
+        <h3>ハウスハウス</h3>
+        <p>スマホ向けの2人対戦ブラウザゲームです。説明ページと、その下の <code style="background:#efe6d6;padding:1px 6px;border-radius:4px;">game/</code> に本体があります。</p>
+        <div class="actions">
+          <a class="more" href="./househouse/">説明を見る</a>
+          <a class="play" href="./househouse/game/">遊ぶ</a>
+        </div>
+      </article>
+    </div>
+    <section class="about">
+      <h2>このサイトについて</h2>
+      <p>個人がブラウザ向けに制作したゲームの公開用ページです。各ゲームのルートは説明、プレイ用ファイルは <code style="background:#efe6d6;padding:1px 6px;border-radius:4px;">game/</code> 以下、という共通の置き方にしています。</p>
+    </section>
   </main>
   <footer>
     <a href="./privacy.html">プライバシーポリシー</a>
