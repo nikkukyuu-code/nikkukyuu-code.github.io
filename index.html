@@ -52,15 +52,27 @@
     background: #fffdf8;
     border: 1px solid #e2d3bc;
     border-radius: 16px;
-    padding: 22px 24px;
-    display: flex;
-    flex-wrap: wrap;
+    padding: 20px 22px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px 16px;
     align-items: center;
-    justify-content: space-between;
-    gap: 12px 16px;
   }
-  .card h3 { margin: 0; font-size: 1.25rem; }
+  .card h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    grid-column: 1;
+  }
+  .card .blurb {
+    margin: 0;
+    font-size: 0.92rem;
+    color: #5a4332;
+    grid-column: 1;
+  }
   a.play {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: center;
     display: inline-block;
     background: var(--accent);
     color: #fff;
@@ -68,6 +80,7 @@
     padding: 10px 18px;
     border-radius: 999px;
     letter-spacing: 0.06em;
+    white-space: nowrap;
   }
   .about {
     margin-top: 36px;
@@ -79,6 +92,16 @@
     font-size: 0.85rem;
   }
   footer a { color: var(--accent); }
+  @media (max-width: 520px) {
+    .card {
+      grid-template-columns: 1fr;
+    }
+    a.play {
+      grid-column: 1;
+      grid-row: auto;
+      justify-self: start;
+    }
+  }
 </style>
 </head>
 <body>
@@ -92,10 +115,12 @@
     <div class="games">
       <article class="card">
         <h3>7GET将棋</h3>
+        <p class="blurb">歩以外を7枚取るか、玉取りで勝ち。AI／ネット対戦。</p>
         <a class="play" href="./shogi/">遊ぶ</a>
       </article>
       <article class="card">
         <h3>ハウスハウス</h3>
+        <p class="blurb">スマホ向け2人対戦。部屋を作ってカジュアルに対戦。</p>
         <a class="play" href="./househouse/">遊ぶ</a>
       </article>
     </div>
