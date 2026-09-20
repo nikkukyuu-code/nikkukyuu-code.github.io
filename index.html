@@ -102,6 +102,27 @@
       justify-self: start;
     }
   }
+
+  .badge {
+    display: inline-block;
+    margin-left: 0.45em;
+    padding: 0.12em 0.55em;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: #fff;
+    background: #8b2a2a;
+    border-radius: 999px;
+    vertical-align: middle;
+    font-family: "Hiragino Sans", "Noto Sans JP", sans-serif;
+  }
+  .card.testing {
+    border-color: #d4a0a0;
+    background: #fff8f6;
+  }
+  .card.testing .play {
+    opacity: 0.92;
+  }
 </style>
 </head>
 <body>
@@ -113,8 +134,8 @@
   <main>
     <h2>公開中のゲーム</h2>
     <div class="games">
-    <article class="card">
-      <h3>横スクロール シューティング オンライン対戦</h3>
+    <article class="card testing">
+      <h3>横スクロール シューティング オンライン対戦 <span class="badge">調整テスト中</span></h3>
       <p class="blurb">縦画面スプリットのオンライン対戦シューティング。アイテムで相手に干渉しながら生き残ろう。</p>
       <a class="play" href="https://nikkukyuu-code.github.io/shooting-online/">遊ぶ</a>
     </article>
@@ -124,8 +145,8 @@
         <p class="blurb">歩以外を7枚取るか、玉取りで勝ち。AI／ネット対戦。</p>
         <a class="play" href="./shogi/">遊ぶ</a>
       </article>
-      <article class="card">
-        <h3>ハウスと罠</h3>
+      <article class="card testing">
+        <h3>ハウスと罠 <span class="badge">調整テスト中</span></h3>
         <p class="blurb">家に罠を仕掛けて、相手の宝箱を探すスマホ向け2人対戦。</p>
         <a class="play" href="./househouse/">遊ぶ</a>
       </article>
