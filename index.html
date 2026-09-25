@@ -304,6 +304,19 @@
     text-decoration: underline;
     text-underline-offset: 3px;
   }
+
+  .card h3 .visit-count {
+    display: inline-block;
+    margin-left: 0.45em;
+    font-size: 0.72em;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    vertical-align: middle;
+  }
+  .card h3 .visit-count.is-ready {
+    color: #c8bfd4;
+  }
 </style>
 </head>
 <body>
@@ -328,7 +341,7 @@
       
 <article class="card" data-game="space">
         <div class="card-body">
-          <h3><a class="card-title-link" href="https://nikkukyuu-code.github.io/shooting-online/">スペーストリックバトル</a></h3>
+          <h3><a class="card-title-link" href="https://nikkukyuu-code.github.io/shooting-online/">スペーストリックバトル</a> <span class="visit-count" data-visit="space" aria-live="polite"></span></h3>
           <p class="blurb">スペーストリックバトル（Space Trick Battle）は、スマホを縦に持って遊ぶ無料のオンライン対戦シューティングです。画面が上下に分かれて相手と撃ち合い、デッキから敵キャラを相手側へ転送して攻めます。敵を倒してアイテムも使えます。デカい敵を倒すと回復が出ます。相手より長く生き残ったほうが勝ちです。</p>
           <a class="play" href="https://nikkukyuu-code.github.io/shooting-online/" aria-label="スペーストリックバトルを遊ぶ">遊ぶ</a>
         </div>
@@ -336,7 +349,7 @@
 
 <article class="card" data-game="house">
         <div class="card-body">
-          <h3>ハウスの罠（仮）</h3>
+          <h3>ハウスの罠（仮） <span class="visit-count" data-visit="house" aria-live="polite"></span></h3>
           <p class="blurb">スマホ向けの2人対戦ゲームです。自分の家に罠と宝箱を仕掛けて守り、相手の家に入って宝箱を探します。</p>
           <a class="play" href="./househouse/">遊ぶ</a>
         </div>
@@ -344,7 +357,7 @@
 
 <article class="card" data-game="shogi">
         <div class="card-body">
-          <h3>7GET将棋</h3>
+          <h3>7GET将棋 <span class="visit-count" data-visit="shogi" aria-live="polite"></span></h3>
           <p class="blurb">将棋の勝利条件に、歩以外の駒を7枚取る条件を加えたゲームです。玉取りでも勝ち。AI対戦とネット対戦ができます。</p>
           <a class="play" href="./shogi/">遊ぶ</a>
         </div>
@@ -361,5 +374,60 @@
     ・
     <a href="mailto:nikkukyuu@gmail.com">お問い合わせ</a>
   </footer>
+
+<script>
+(function () {
+  var ENDPOINTS = {
+    space: "https://abacus.jasoncameron.dev/get/nikkukyuu/shooting-online",
+    house: "https://abacus.jasoncameron.dev/get/nikkukyuu/househouse",
+    shogi: "https://abacus.jasoncameron.dev/get/nikkukyuu/shogi"
+  };
+  var STORAGE_PREFIX = "hub_visitLast_";
+
+  function readLast(key) {
+    try {
+      var n = Number(localStorage.getItem(STORAGE_PREFIX + key));
+      return Number.isFinite(n) && n > 0 ? Math.floor(n) : 0;
+    } catch (e) {
+      return 0;
+    }
+  }
+
+  function writeLast(key, n) {
+    try {
+      var prev = readLast(key);
+      if (n > prev) localStorage.setItem(STORAGE_PREFIX + key, String(n));
+    } catch (e) {}
+  }
+
+  function format(n) {
+    return Number(n).toLocaleString("ja-JP");
+  }
+
+  function paint(el, n) {
+    if (!el || !(n > 0)) return;
+    el.textContent = "アクセス " + format(n);
+    el.classList.add("is-ready");
+  }
+
+  document.querySelectorAll("[data-visit]").forEach(function (el) {
+    var key = el.getAttribute("data-visit");
+    var last = readLast(key);
+    if (last > 0) paint(el, last);
+    var url = ENDPOINTS[key];
+    if (!url) return;
+    fetch(url + "?_=" + Date.now(), { cache: "no-store", mode: "cors" })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) {
+        var n = d && typeof d.value === "number" ? d.value : Number(d && d.value);
+        if (!Number.isFinite(n) || n <= 0) return;
+        var best = Math.max(Math.floor(n), last);
+        writeLast(key, best);
+        paint(el, best);
+      })
+      .catch(function () {});
+  });
+})();
+</script>
 </body>
 </html>
