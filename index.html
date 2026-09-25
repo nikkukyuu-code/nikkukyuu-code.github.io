@@ -8,127 +8,309 @@
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1273660625090851" crossorigin="anonymous"></script>
 <style>
   :root {
-    --bg: #f6f1e8;
-    --ink: #2b1c12;
-    --accent: #8b2a2a;
-    --gold: #c9a227;
+    --bg0: #0b0c12;
+    --bg1: #12141e;
+    --card: #161926;
+    --ink: #f3efe6;
+    --muted: #a8a0b8;
+    --accent: #ff6b6b;
+    --gold: #e8c56a;
+    --cyan: #5ad6ff;
+    --violet: #a78bfa;
+    --line: rgba(232, 197, 106, 0.22);
+    --glow: 0 0 40px rgba(90, 214, 255, 0.12);
   }
   * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
   body {
     margin: 0;
-    font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
+    font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", sans-serif;
     color: var(--ink);
-    background: var(--bg);
+    background:
+      radial-gradient(1200px 600px at 50% -10%, rgba(90, 214, 255, 0.14), transparent 55%),
+      radial-gradient(900px 500px at 100% 20%, rgba(167, 139, 250, 0.12), transparent 50%),
+      radial-gradient(800px 480px at 0% 60%, rgba(255, 107, 107, 0.08), transparent 45%),
+      linear-gradient(180deg, var(--bg0), var(--bg1) 40%, #0e1018);
     line-height: 1.7;
+    min-height: 100dvh;
+  }
+  .noise {
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    z-index: 0;
   }
   header {
-    padding: 48px 20px 28px;
+    position: relative;
+    z-index: 1;
+    padding: 56px 20px 36px;
     text-align: center;
-    border-bottom: 1px solid #e2d3bc;
+    overflow: hidden;
+  }
+  header::before {
+    content: "";
+    position: absolute;
+    inset: auto 10% -40px;
+    height: 120px;
+    background: radial-gradient(ellipse at center, rgba(232, 197, 106, 0.25), transparent 70%);
+    filter: blur(8px);
+    pointer-events: none;
   }
   header p.kicker {
-    margin: 0 0 8px;
-    letter-spacing: 0.28em;
-    font-size: 0.75rem;
-    color: var(--accent);
+    margin: 0 0 10px;
+    letter-spacing: 0.34em;
+    font-size: 0.72rem;
+    color: var(--gold);
+    font-weight: 600;
   }
-  h1 { margin: 0; font-size: clamp(1.6rem, 4vw, 2.2rem); font-weight: 700; }
+  h1 {
+    margin: 0;
+    font-size: clamp(1.75rem, 5.5vw, 2.55rem);
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    line-height: 1.25;
+    background: linear-gradient(135deg, #fff 10%, var(--gold) 55%, var(--cyan) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
   .lead {
-    max-width: 36em;
-    margin: 14px auto 0;
+    max-width: 28em;
+    margin: 16px auto 0;
     font-size: 1.02rem;
+    color: var(--muted);
   }
-  main { max-width: 720px; margin: 0 auto; padding: 32px 20px 64px; }
-  h2 {
-    margin: 0 0 16px;
-    font-size: 1.15rem;
+  .hero-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 22px;
+  }
+  .hero-pills span {
+    font-size: 0.75rem;
     letter-spacing: 0.06em;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,0.03);
+    color: #d8d0e4;
+  }
+  main {
+    position: relative;
+    z-index: 1;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 12px 16px 72px;
+  }
+  h2 {
+    margin: 0 0 18px;
+    font-size: 0.95rem;
+    letter-spacing: 0.18em;
+    color: var(--gold);
+    font-weight: 700;
   }
   .games {
     display: grid;
-    gap: 16px;
+    gap: 20px;
   }
   .card {
-    background: #fffdf8;
-    border: 1px solid #e2d3bc;
-    border-radius: 16px;
-    padding: 20px 22px;
+    position: relative;
+    background: linear-gradient(165deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015));
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 0;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr;
+    box-shadow: var(--glow), 0 18px 40px rgba(0,0,0,0.35);
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .card:hover, .card:focus-within {
+    transform: translateY(-3px);
+    border-color: rgba(232, 197, 106, 0.45);
+    box-shadow: 0 0 48px rgba(90, 214, 255, 0.16), 0 22px 48px rgba(0,0,0,0.45);
+  }
+  .card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+  }
+  .card[data-game="space"] { --accent-local: var(--cyan); }
+  .card[data-game="shogi"] { --accent-local: var(--gold); }
+  .card[data-game="house"] { --accent-local: #7ddea0; }
+  .card-preview {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 480 / 640;
+    object-fit: cover;
+    object-position: center top;
+    background: #090b12;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .card-body {
     display: grid;
     grid-template-columns: 1fr auto;
-    gap: 8px 16px;
+    gap: 10px 16px;
     align-items: center;
+    padding: 16px 18px 18px;
   }
   .card h3 {
     margin: 0;
-    font-size: 1.2rem;
+    font-size: 1.22rem;
+    letter-spacing: 0.03em;
     grid-column: 1;
+    color: #fff;
+  }
+  .card h3::before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 8px;
+    background: var(--accent-local, var(--gold));
+    box-shadow: 0 0 12px var(--accent-local, var(--gold));
+    vertical-align: middle;
+    transform: translateY(-1px);
   }
   .card .blurb {
     margin: 0;
-    font-size: 0.92rem;
-    color: #5a4332;
+    font-size: 0.9rem;
+    color: var(--muted);
     grid-column: 1;
+    line-height: 1.55;
   }
   a.play {
     grid-column: 2;
     grid-row: 1 / span 2;
     align-self: center;
-    display: inline-block;
-    background: var(--accent);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 88px;
+    background: linear-gradient(135deg, #c94a4a, var(--accent));
     color: #fff;
     text-decoration: none;
-    padding: 10px 18px;
+    padding: 12px 20px;
     border-radius: 999px;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.1em;
+    font-weight: 700;
     white-space: nowrap;
+    box-shadow: 0 8px 24px rgba(255, 107, 107, 0.28);
+    transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease;
+  }
+  a.play:hover {
+    filter: brightness(1.08);
+    transform: scale(1.04);
+    box-shadow: 0 10px 28px rgba(255, 107, 107, 0.4);
+  }
+  a.play:active { transform: scale(0.97); }
+  .card[data-game="space"] a.play {
+    background: linear-gradient(135deg, #2a8fd4, var(--cyan));
+    color: #061018;
+    box-shadow: 0 8px 24px rgba(90, 214, 255, 0.28);
+  }
+  .card[data-game="shogi"] a.play {
+    background: linear-gradient(135deg, #a67c2a, var(--gold));
+    color: #1a1208;
+    box-shadow: 0 8px 24px rgba(232, 197, 106, 0.28);
+  }
+  .card[data-game="house"] a.play {
+    background: linear-gradient(135deg, #2f9a5f, #7ddea0);
+    color: #06140c;
+    box-shadow: 0 8px 24px rgba(125, 222, 160, 0.28);
   }
   .about {
-    margin-top: 36px;
+    margin-top: 40px;
+    padding: 22px 20px;
+    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,0.06);
+    background: rgba(255,255,255,0.02);
     font-size: 0.95rem;
+    color: var(--muted);
   }
+  .about h2 { margin-bottom: 10px; }
+  .about p { margin: 0; }
   footer {
+    position: relative;
+    z-index: 1;
     text-align: center;
-    padding: 24px 20px 40px;
+    padding: 8px 20px 48px;
     font-size: 0.85rem;
+    color: #7d768c;
   }
-  footer a { color: var(--accent); }
+  footer a {
+    color: var(--gold);
+    text-decoration: none;
+  }
+  footer a:hover { text-decoration: underline; }
   @media (max-width: 520px) {
-    .card {
+    header { padding: 44px 16px 28px; }
+    .card-body {
       grid-template-columns: 1fr;
+      padding: 14px 14px 16px;
     }
     a.play {
       grid-column: 1;
       grid-row: auto;
-      justify-self: start;
+      justify-self: stretch;
+      width: 100%;
+      padding: 13px 18px;
+    }
+    .card-preview {
+      aspect-ratio: 16 / 11;
+      object-position: center 18%;
     }
   }
-
 </style>
 </head>
 <body>
+  <div class="noise" aria-hidden="true"></div>
   <header>
     <p class="kicker">NIKKUKYUU-CODE</p>
     <h1>ブラウザで気軽に対戦</h1>
     <p class="lead">ネット対戦をカジュアルに楽しめるゲームを公開しているサイトです。</p>
+    <div class="hero-pills" aria-hidden="true">
+      <span>オンライン対戦</span>
+      <span>スマホOK</span>
+      <span>インストール不要</span>
+    </div>
   </header>
   <main>
     <h2>公開中のゲーム</h2>
     <div class="games">
-    <article class="card">
-      <h3>スペーストリックバトル</h3>
-      <p class="blurb">縦画面スプリットのオンライン対戦シューティング。アイテムで相手に干渉しながら生き残ろう。</p>
-      <a class="play" href="https://nikkukyuu-code.github.io/shooting-online/">遊ぶ</a>
-    </article>
-
-      <article class="card">
-        <h3>7GET将棋</h3>
-        <p class="blurb">歩以外を7枚取るか、玉取りで勝ち。AI／ネット対戦。</p>
-        <a class="play" href="./shogi/">遊ぶ</a>
+      <article class="card" data-game="space">
+        <img class="card-preview" src="./previews/spacetrick.gif" alt="スペーストリックバトルのプレイ映像" width="560" height="747" loading="lazy" />
+        <div class="card-body">
+          <h3>スペーストリックバトル</h3>
+          <p class="blurb">縦画面スプリットのオンライン対戦シューティング。アイテムで相手に干渉しながら生き残ろう。</p>
+          <a class="play" href="https://nikkukyuu-code.github.io/shooting-online/">遊ぶ</a>
+        </div>
       </article>
-      <article class="card">
-        <h3>ハウスと罠</h3>
-        <p class="blurb">家に罠を仕掛けて、相手の宝箱を探すスマホ向け2人対戦。</p>
-        <a class="play" href="./househouse/">遊ぶ</a>
+
+      <article class="card" data-game="shogi">
+        <img class="card-preview" src="./previews/shogi.gif" alt="7GET将棋のプレイ映像" width="560" height="747" loading="lazy" />
+        <div class="card-body">
+          <h3>7GET将棋</h3>
+          <p class="blurb">歩以外を7枚取るか、玉取りで勝ち。AI／ネット対戦。</p>
+          <a class="play" href="./shogi/">遊ぶ</a>
+        </div>
+      </article>
+
+      <article class="card" data-game="house">
+        <img class="card-preview" src="./previews/househouse.gif" alt="ハウスと罠のプレイ映像" width="560" height="747" loading="lazy" />
+        <div class="card-body">
+          <h3>ハウスと罠</h3>
+          <p class="blurb">家に罠を仕掛けて、相手の宝箱を探すスマホ向け2人対戦。</p>
+          <a class="play" href="./househouse/">遊ぶ</a>
+        </div>
       </article>
     </div>
     <section class="about">
