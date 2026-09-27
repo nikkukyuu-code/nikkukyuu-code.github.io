@@ -229,17 +229,63 @@
     color: #06140c;
     box-shadow: 0 8px 22px rgba(125, 222, 160, 0.28);
   }
+  /* β版 badge (beta) */
+  .beta-badge {
+    display: inline-block;
+    margin-left: 0.35em;
+    padding: 0.2em 0.55em 0.22em;
+    font-size: max(0.72rem, 0.42em);
+    font-weight: 900;
+    font-style: normal;
+    line-height: 1.1;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    vertical-align: middle;
+    color: #fff;
+    -webkit-text-fill-color: #fff;
+    -webkit-text-stroke: 0;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
+    background: linear-gradient(135deg, #ff2d55, #ff8a00);
+    border: 2px solid rgba(255, 255, 255, 0.85);
+    border-radius: 999px;
+    box-shadow: 0 0 12px rgba(255, 70, 70, 0.55), 0 2px 6px rgba(0, 0, 0, 0.35);
+    transform: rotate(-8deg);
+    filter: none;
+  }
   .beta-notice {
     margin: 4px 0 18px;
-    padding: 11px 16px;
+    padding: 12px 16px;
     border-radius: 12px;
-    border: 1px solid rgba(232, 197, 106, 0.16);
-    background: rgba(232, 197, 106, 0.05);
-    color: #9a92a8;
-    font-size: 0.84rem;
+    border: 2px solid #ff8a00;
+    background: linear-gradient(135deg, rgba(255, 45, 85, 0.18), rgba(255, 138, 0, 0.16));
+    box-shadow: 0 0 22px rgba(255, 110, 40, 0.22);
+    color: #fff1dc;
+    font-size: 0.9rem;
+    font-weight: 700;
     text-align: center;
-    line-height: 1.65;
+    line-height: 1.6;
   }
+  .beta-notice strong {
+    display: block;
+    margin-bottom: 2px;
+    font-size: 1.08rem;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    color: #ffd24a;
+  }
+  .hero-beta {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #ff2d55, #ff8a00);
+    color: #fff;
+    font-size: 0.86rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    box-shadow: 0 0 16px rgba(255, 70, 70, 0.45);
+  }
+  .card h3 .beta-badge { font-size: 0.62em; margin-left: 0.4em; }
   .about {
     margin-top: 36px;
     padding: 18px 18px;
@@ -323,8 +369,9 @@
   <div class="noise" aria-hidden="true"></div>
   <header>
     <p class="kicker">NIKKUKYUU-CODE</p>
-    <h1>ブラウザで気軽に対戦</h1>
+    <h1>ブラウザで気軽に対戦<span class="beta-badge">β版</span></h1>
     <p class="lead">ネット対戦をカジュアルに楽しめるゲームを公開しているサイトです。</p>
+    <p class="hero-beta" role="note">⚠ 現在ベータ版です。不具合や仕様変更があります</p>
     <div class="hero-pills" aria-hidden="true">
       <span>オンライン対戦</span>
       <span>スマホOK</span>
@@ -336,12 +383,12 @@
       <h2>公開中のゲーム</h2>
       <span class="hint">タップしてすぐ遊べます</span>
     </div>
-    <p class="beta-notice" role="note">すべてのゲームは現在ベータ版です。仕様やバランスはたびたび変更されることがあります。</p>
+    <p class="beta-notice" role="note"><strong>⚠ β版（ベータ版）公開中</strong>すべてのゲームは現在ベータ版です。仕様やバランスはたびたび変更されることがあります。不具合が起きることもあります。</p>
     <div class="games">
       
 <article class="card" data-game="space">
         <div class="card-body">
-          <h3><a class="card-title-link" href="https://nikkukyuu-code.github.io/shooting-online/">スペーストリックバトル</a> <span class="visit-count" data-visit="space" aria-live="polite"></span></h3>
+          <h3><a class="card-title-link" href="https://nikkukyuu-code.github.io/shooting-online/">スペーストリックバトル</a><span class="beta-badge">β版</span> <span class="visit-count" data-visit="space" aria-live="polite"></span></h3>
           <p class="blurb">スペーストリックバトル（Space Trick Battle）は、スマホを縦に持って遊ぶ無料のオンライン対戦シューティングです。画面が上下に分かれて相手と撃ち合い、デッキから敵キャラを相手側へ転送して攻めます。敵を倒してアイテムも使えます。デカい敵を倒すと回復が出ます。相手より長く生き残ったほうが勝ちです。</p>
           <a class="play" href="https://nikkukyuu-code.github.io/shooting-online/" aria-label="スペーストリックバトルを遊ぶ">遊ぶ</a>
         </div>
@@ -349,7 +396,7 @@
 
 <article class="card" data-game="house">
         <div class="card-body">
-          <h3>トリックハウスバトル <span class="visit-count" data-visit="house" aria-live="polite"></span></h3>
+          <h3>トリックハウスバトル<span class="beta-badge">β版</span> <span class="visit-count" data-visit="house" aria-live="polite"></span></h3>
           <p class="blurb">スマホ向けの2人対戦ゲームです。自分の家に罠と宝箱を仕掛けて守り、相手の家に入って宝箱を探します。</p>
           <a class="play" href="./househouse/">遊ぶ</a>
         </div>
@@ -357,7 +404,7 @@
 
 <article class="card" data-game="shogi">
         <div class="card-body">
-          <h3>7GET将棋 <span class="visit-count" data-visit="shogi" aria-live="polite"></span></h3>
+          <h3>7GET将棋<span class="beta-badge">β版</span> <span class="visit-count" data-visit="shogi" aria-live="polite"></span></h3>
           <p class="blurb">将棋の勝利条件に、歩以外の駒を7枚取る条件を加えたゲームです。玉取りでも勝ち。AI対戦とネット対戦ができます。</p>
           <a class="play" href="./shogi/">遊ぶ</a>
         </div>
