@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>引き継ぎ（全ゲーム共通コード） — nikkukyuu-code</title>
+<meta name="description" content="スペーストリックバトル・トリックハウスバトル・7GET将棋の記録を、1つのコードで別の端末やブラウザに引き継げます。" />
+<link rel="canonical" href="https://nikkukyuu-code.github.io/transfer/" />
+<meta name="robots" content="noindex" />
+<style>
+  :root { --ink: #f4f0e8; --muted: #a69eb8; --gold: #e8c56a; --line: rgba(232, 197, 106, 0.25); }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", sans-serif; color: var(--ink); background: radial-gradient(900px 420px at 50% -8%, rgba(90, 214, 255, 0.12), transparent 55%), #0b0c14; line-height: 1.6; }
+  main { width: min(640px, 100%); margin: 0 auto; padding: 18px 14px 40px; }
+  .nav { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; }
+  .nav a { color: var(--ink); text-decoration: none; font-size: 0.85rem; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--line); background: rgba(255,255,255,0.04); }
+  .nav a.back { border-color: #ffb020; background: rgba(255, 176, 32, 0.14); font-weight: 700; }
+  h1 { margin: 4px 0 6px; font-size: 1.45rem; color: var(--gold); letter-spacing: 0.04em; }
+  .lead { margin: 0 0 12px; color: #d8d0e4; font-size: 0.92rem; }
+  .notice { margin: 0 0 16px; padding: 12px 14px; border-radius: 12px; border: 2px solid #ffb020; background: rgba(60, 30, 0, 0.55); font-size: 0.88rem; }
+  .notice strong { color: #ffd24a; }
+  .notice ul { margin: 6px 0 6px 1.2em; padding: 0; }
+  section { margin: 0 0 16px; padding: 14px; border-radius: 14px; border: 1px solid var(--line); background: rgba(255,255,255,0.03); }
+  h2 { margin: 0 0 8px; font-size: 1.08rem; color: var(--gold); }
+  textarea { display: block; width: 100%; min-height: 96px; max-height: 40vh; margin: 8px 0; padding: 9px; border-radius: 9px; border: 1px solid #8a7550; background: #07080d; color: #fff; font: 12px/1.35 ui-monospace, Menlo, Consolas, monospace; word-break: break-all; resize: vertical; }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  button { appearance: none; -webkit-appearance: none; min-height: 42px; padding: 8px 16px; border-radius: 10px; border: 1px solid #d8b35a; background: #2e2415; color: #fff3d0; font: inherit; font-weight: 700; cursor: pointer; touch-action: manipulation; }
+  button.primary { background: linear-gradient(180deg, #c9861d, #8a5510); border-color: #ffd978; }
+  button:disabled { opacity: 0.45; cursor: default; }
+  [hidden] { display: none !important; }
+  .msg { margin: 4px 0 0; font-size: 0.85rem; color: #ffe3a8; min-height: 1em; word-break: break-word; }
+  .msg.err { color: #ff9a8a; }
+  .sum { margin: 8px 0; padding: 10px 12px; border-radius: 10px; background: rgba(255,255,255,0.06); font-size: 0.86rem; }
+  .sum p { margin: 0 0 6px; }
+  .sum-game { margin: 0 0 8px; padding: 0 0 8px; border-bottom: 1px dashed rgba(255,255,255,0.12); word-break: break-word; }
+  .sum-game:last-child { border-bottom: 0; margin-bottom: 0; padding-bottom: 0; }
+  .sum-k { color: var(--muted); }
+  .muted { color: var(--muted); font-size: 0.82rem; }
+  .games { margin: 6px 0 0; padding-left: 1.2em; font-size: 0.86rem; }
+  footer { text-align: center; font-size: 0.8rem; color: var(--muted); }
+  footer a { color: var(--muted); }
+</style>
+</head>
+<body>
+<main id="transfer-app">
+  <nav class="nav">
+    <a class="back" data-back hidden href="/">← ゲームに戻る</a>
+    <a href="/">サイトトップ</a>
+  </nav>
+  <h1>引き継ぎ（全ゲーム共通コード）</h1>
+  <p class="lead">このサイトの<strong>すべてのゲームの記録</strong>（PT・ポイント・持っているキャラや家・デッキ・ランキング・設定・COMの記憶など）を<strong>1つのコード</strong>にまとめて、別の端末やブラウザへ引き継げます。</p>
+  <div class="notice" role="note">
+    <strong>⚠ 記録はこの端末のブラウザ内に保存されています。</strong>次の場合は消えることがあります：
+    <ul>
+      <li>iPhone/iPadのSafariでこのサイトを<strong>7日ほど開かなかった</strong>時</li>
+      <li>ブラウザの閲覧データ（サイトデータ/Cookie）を削除した時</li>
+      <li>シークレット/プライベートモードで遊んだ時（閉じると消えます）</li>
+    </ul>
+    別のブラウザや端末には自動では引き継がれません。大事な記録は、ここでコードを発行して控えておいてください。
+  </div>
+
+  <section>
+    <h2>この端末の記録</h2>
+    <div id="here" class="sum"></div>
+  </section>
+
+  <section>
+    <h2>① コードを発行（控える・別の端末へ）</h2>
+    <div class="row"><button type="button" class="primary" id="btn-export">コードを発行</button><button type="button" id="btn-copy" disabled>コピー</button></div>
+    <textarea id="out" readonly hidden aria-label="発行したコード"></textarea>
+    <p class="msg" id="outmsg"></p>
+  </section>
+
+  <section>
+    <h2>② コードを入力（この端末に引き継ぐ）</h2>
+    <textarea id="in" placeholder="発行したコードを貼り付け" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="コードを入力"></textarea>
+    <div class="row"><button type="button" id="btn-check">内容を確認</button></div>
+    <div class="sum" id="sum" hidden></div>
+    <div class="row" id="applyrow" hidden><button type="button" class="primary" id="btn-apply">この内容で引き継ぐ</button><button type="button" id="btn-cancel">やめる</button></div>
+    <p class="msg" id="inmsg"></p>
+  </section>
+
+  <section>
+    <h2>対応ゲーム</h2>
+    <ul class="games">
+      <li><a href="/shooting-online/" style="color:inherit">スペーストリックバトル</a>：PT・持っているキャラ・デッキ・チュートリアル</li>
+      <li><a href="/househouse/game/" style="color:inherit">トリックハウスバトル</a>：ポイント・持っている家・選んだ家・COMが覚えた場所・設定</li>
+      <li><a href="/shogi/game/" style="color:inherit">7GET将棋</a>：ランキング（ベストタイム）・ニックネーム・設定</li>
+    </ul>
+    <p class="muted">今後追加されるゲームの記録も、このコードにまとめて入ります。引き継ぐ時は、数値（PT・ポイント）は大きい方、持っているもの（キャラ・家）は両方、ベストタイムは速い方を残すので、記録が減ることはありません。</p>
+  </section>
+
+  <nav class="nav"><a class="back" data-back hidden href="/">← ゲームに戻る</a><a href="/">サイトトップ</a></nav>
+  <footer><a href="/privacy.html">プライバシーポリシー</a></footer>
+</main>
+<script src="transfer.js?v=20260928033916"></script>
+</body>
+</html>

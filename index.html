@@ -273,6 +273,24 @@
     letter-spacing: 0.06em;
     color: #ffd24a;
   }
+  .save-notice {
+    margin: 0 0 20px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 2px solid #ffb020;
+    background: rgba(60, 30, 0, 0.55);
+    box-shadow: 0 0 18px rgba(255, 176, 32, 0.18);
+    color: #fff1dc;
+    font-size: 0.9rem;
+    line-height: 1.65;
+    text-align: left;
+  }
+  .save-notice h2 { margin: 0 0 6px; font-size: 1.05rem; font-weight: 900; color: #ffd24a; letter-spacing: 0.04em; text-align: center; }
+  .save-notice ul { margin: 6px 0 8px 1.2em; padding: 0; }
+  .save-notice li { margin: 2px 0; }
+  .save-notice strong { color: #ffd24a; }
+  .save-notice .tx-link { display: block; margin: 10px auto 4px; max-width: 22em; padding: 11px 14px; border-radius: 12px; text-align: center; font-weight: 900; font-size: 1rem; color: #1a1206; text-decoration: none; background: linear-gradient(180deg, #ffd978, #e39a1f); box-shadow: 0 4px 16px rgba(255, 176, 32, 0.3); }
+  .save-notice .tx-games { margin: 8px 0 0; padding: 8px 10px; border-radius: 8px; background: rgba(255,255,255,0.05); font-size: 0.85rem; }
   .card h3 .beta-badge { font-size: 0.62em; margin-left: 0.4em; }
   .about {
     margin-top: 36px;
@@ -371,6 +389,18 @@
       <span class="hint">タップしてすぐ遊べます</span>
     </div>
     <p class="beta-notice" role="note"><strong>⚠ β版（ベータ版）公開中</strong>すべてのゲームは現在ベータ版です。仕様やバランスはたびたび変更されることがあります。不具合が起きることもあります。</p>
+    <section class="save-notice" role="note" aria-label="記録の保存について">
+      <h2>⚠ 記録の保存について（とくにiPhone/iPadの方）</h2>
+      <p>ゲームの記録（ポイント・持っている家・デッキ・ランキング・設定など）は<strong>この端末のブラウザ内</strong>に保存されています。次の場合は消えることがあります：</p>
+      <ul>
+        <li>iPhone/iPadのSafariでこのサイトを<strong>7日ほど開かなかった</strong>時</li>
+        <li>ブラウザの閲覧データ（サイトデータ/Cookie）を削除した時</li>
+        <li>シークレット/プライベートモードで遊んだ時（閉じると消えます）</li>
+      </ul>
+      <p>別のブラウザや端末には自動では引き継がれません。大事な記録は<strong>「引き継ぎ（全ゲーム共通コード）」</strong>で、すべてのゲームの記録を<strong>1つのコード</strong>にして控えておいてください。別の端末やブラウザでは同じページの「コードを入力」で記録を戻せます（PT・ポイントなどは減りません）。</p>
+      <a class="tx-link" href="/transfer/">引き継ぎ（全ゲーム共通コード）を開く →</a>
+      <p class="tx-games">対応：<strong>スペーストリックバトル</strong>（PT・キャラ・デッキ）／<strong>トリックハウスバトル</strong>（ポイント・家・COMが覚えた場所）／<strong>7GET将棋</strong>（ランキング・ニックネーム・設定）。今後追加するゲームの記録も同じコードに入ります。スペーストリックバトルのゲーム内「引き継ぎ」ボタンも近日追加予定です。</p>
+    </section>
     <div class="games">
       
 <article class="card" data-game="space">
