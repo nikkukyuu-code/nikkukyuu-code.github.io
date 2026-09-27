@@ -71,26 +71,13 @@
   .easy-note b { color: #ffe07a; }
   .flash { animation: secFlash 1.2s ease-out; }
   @keyframes secFlash { 0% { box-shadow: 0 0 0 4px rgba(255, 210, 74, 0.9); } 100% { box-shadow: 0 0 0 0 rgba(255, 210, 74, 0); } }
-  .easy-way { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; margin: 10px 0 6px; font-size: 1rem; color: #fff1c8; }
-  .easy-way:first-of-type { margin-top: 0; }
-  .easy-way small { font-size: 0.78em; color: #e8dcc0; font-weight: 700; }
-  .way-tag { display: inline-block; padding: 1px 8px; border-radius: 999px; background: #ff4f7a; color: #fff; font-size: 0.75rem; font-weight: 900; }
-  .qr-box { margin: 10px 0 0; padding: 12px; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--line); text-align: center; }
-  .qr-title { margin: 0 0 8px; font-weight: 800; color: #ffe07a; }
-  #qr { display: block; width: min(260px, 72vw); height: auto; aspect-ratio: 1; margin: 0 auto; background: #fff; border-radius: 6px; image-rendering: pixelated; }
-  .qr-msg { margin: 8px 0 0; font-size: 0.82rem; color: #f0e6d0; text-align: left; }
-  .qr-row { justify-content: center; margin-top: 8px; }
-  .qr-save { display: inline-flex; align-items: center; min-height: 40px; padding: 6px 16px; border-radius: 10px; border: 1px solid #d8b35a; background: #2e2415; color: #fff3d0; font-weight: 700; text-decoration: none; }
-  .qr-warn { margin: 8px 0 0; font-size: 0.8rem; color: #ffb4a8; font-weight: 700; }
-  .qr-ng { margin: 10px 0 0; padding: 10px 12px; border-radius: 10px; background: rgba(255, 90, 60, 0.14); border: 1px solid rgba(255, 120, 90, 0.5); font-size: 0.85rem; color: #ffd6cc; }
   @media (max-width: 480px) {
     main { padding-top: 12px; }
     .nav { margin-bottom: 8px; }
     h1 { font-size: 1.12rem; margin: 0 0 8px; }
     .easy { padding: 10px 9px 9px; }
     .easy h2 { margin-bottom: 8px; }
-    .easy-way { font-size: 0.92rem; }
-    .steps { gap: 5px; }
+      .steps { gap: 5px; }
     .steps li { padding: 6px 8px; gap: 6px; }
     .step-no { width: 1.7rem; height: 1.7rem; font-size: 1.1rem; }
     .step-ic { font-size: 1.15rem; line-height: 1.7rem; }
@@ -110,25 +97,15 @@
   <h1>引き継ぎ（全ゲーム共通コード）</h1>
   <section class="easy" aria-labelledby="easy-title">
     <h2 id="easy-title">かんたん引き継ぎ 3ステップ</h2>
-    <h3 class="easy-way"><span class="way-tag">おすすめ</span>📷 QRコードでかんたん引き継ぎ<small>（2台が手元にある時）</small></h3>
-    <ol class="steps">
-      <li><span class="step-no" aria-hidden="true">1</span><span class="step-ic" aria-hidden="true">📱</span>
-        <div class="step-tx"><b>今の端末</b>で「コードを発行」（QRコードが出ます）<button type="button" class="step-btn" data-go="export">コードを発行へ ↓</button></div></li>
-      <li><span class="step-no" aria-hidden="true">2</span><span class="step-ic" aria-hidden="true">📷</span>
-        <div class="step-tx"><b>新しい端末のカメラ</b>でQRコードを読み取る</div></li>
-      <li><span class="step-no" aria-hidden="true">3</span><span class="step-ic" aria-hidden="true">✅</span>
-        <div class="step-tx">開いたページで内容を確認して<b>「この内容で引き継ぐ」</b></div></li>
-    </ol>
-    <h3 class="easy-way">✉️ 離れた端末へ送る時（コピーして送る）</h3>
     <ol class="steps">
       <li><span class="step-no" aria-hidden="true">1</span><span class="step-ic" aria-hidden="true">📋</span>
-        <div class="step-tx"><b>今の端末</b>で「コードを発行」を押して「コピー」</div></li>
+        <div class="step-tx"><b>今の端末</b>で「コードを発行」を押して「コピー」<button type="button" class="step-btn" data-go="export">コードを発行へ ↓</button></div></li>
       <li><span class="step-no" aria-hidden="true">2</span><span class="step-ic" aria-hidden="true">✉️</span>
         <div class="step-tx">LINEの自分用トーク・メモ・メール・AirDropなどで<b>新しい端末に送る</b></div></li>
       <li><span class="step-no" aria-hidden="true">3</span><span class="step-ic" aria-hidden="true">📲</span>
         <div class="step-tx"><b>新しい端末</b>でこのページを開き、「コードを入力」に貼り付けて「この内容で引き継ぐ」<button type="button" class="step-btn" data-go="import">コードを入力へ ↓</button></div></li>
     </ol>
-    <p class="easy-note">※コードはとても長いので、<b>手で打たずに「コピー」→「貼り付け」</b>してください。<br>※新しい端末でも<b>同じサイト（nikkukyuu-code.github.io）</b>を開いてください。<br>※<b>QRコードやコードは他の人に見せたり、SNSに投稿したりしないでください</b>（あなたの記録が他の人の端末に入ってしまいます）。</p>
+    <p class="easy-note">※コードはとても長いので、<b>手で打たずに「コピー」→「貼り付け」</b>してください。<br>※新しい端末でも<b>同じサイト（nikkukyuu-code.github.io）</b>を開いてください。<br>※<b>コードは他の人に見せたり、SNSに投稿したりしないでください</b>（あなたの記録が他の人の端末に入ってしまいます）。</p>
   </section>
   <p class="lead">このサイトの<strong>すべてのゲームの記録</strong>（PT・ポイント・持っているキャラや家・デッキ・ランキング・設定・COMの記憶など）を<strong>1つのコード</strong>にまとめて、別の端末やブラウザへ引き継げます。</p>
   <div class="notice" role="note">
@@ -151,14 +128,6 @@
     <div class="row"><button type="button" class="primary" id="btn-export">コードを発行</button><button type="button" id="btn-copy" disabled>コピー</button></div>
     <textarea id="out" readonly hidden aria-label="発行したコード"></textarea>
     <p class="msg" id="outmsg"></p>
-    <div class="qr-box" id="qr-box" hidden>
-      <p class="qr-title">📷 新しい端末のカメラで読み取ってください</p>
-      <canvas id="qr" width="260" height="260" aria-label="引き継ぎ用QRコード"></canvas>
-      <p class="qr-msg" id="qr-msg"></p>
-      <div class="row qr-row"><a class="qr-save" id="qr-save" download="nikkukyuu-hikitsugi-qr.png" href="#">QR画像を保存</a></div>
-      <p class="qr-warn">⚠ このQRコードは他の人に見せたり、SNSに投稿したりしないでください。</p>
-    </div>
-    <p class="qr-ng" id="qr-ng" hidden></p>
   </section>
 
   <section id="sec-import">
@@ -183,7 +152,6 @@
   <nav class="nav"><a class="back" data-back hidden href="/">← ゲームに戻る</a><a href="/">サイトトップ</a></nav>
   <footer><a href="/privacy.html">プライバシーポリシー</a></footer>
 </main>
-<script src="qrcode.js?v=20260928041908"></script>
-<script src="transfer.js?v=20260928041908"></script>
+<script src="transfer.js?v=20260928043233"></script>
 </body>
 </html>

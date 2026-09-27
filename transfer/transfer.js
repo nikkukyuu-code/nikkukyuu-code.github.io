@@ -157,8 +157,6 @@
         'househouse-ingame-tut-v1': houseTut,
         ht_mute: 'imported',
       },
-      // QR too long → first drop spare copies, then these (named on screen)
-      qrOptional: [{ keys: ['househouse-com-memory-v1'], label: 'トリックハウスバトルの「COMが覚えた場所」' }],
       summary: function (d) {
         var owned = json(d['househouse-houses-owned-v1'] || '[]', []);
         var m = json(d['househouse-com-memory-v1'] || '{}', {});
@@ -170,7 +168,6 @@
     {
       id: 'shogi', name: '7GET将棋',
       match: function (k) { return k.indexOf('shogi-') === 0 || k.indexOf('shogi_') === 0; },
-      qrSpare: function (k, d) { return SHOGI_SEALED.indexOf(k) >= 0 && shogiRankList(d['shogi-rank-plain-v2']).length > 0; },
       rules: (function () {
         var r = { 'shogi-rank-plain-v2': shogiRanks, 'shogi-player-id': 'imported', 'shogi-player-name': 'imported', 'shogi-pref-v1': 'imported' };
         SHOGI_SEALED.forEach(function (k) { r[k] = shogiSealed; });
@@ -274,47 +271,6 @@
     Object.keys(obj.d).forEach(function (k) { if (typeof obj.d[k] !== 'string') delete obj.d[k]; });
     return obj;
   }
-  /* ---------- QR code (vendored qrcode-generator; URL fragment is never sent to the server) ---------- */
-  var QR_MAX_MODULES = 117; // version 25 (EC L): still reliably scannable from a phone screen
-  var SPARE_RE = /(_bak|-bak)$|legacy_bak/;
-  function qrUrl(code) { return location.origin + '/transfer/#code=' + code; }
-  function makeQr(text) {
-    if (typeof qrcode !== 'function') return null;
-    try { var q = qrcode(0, 'L'); q.addData(text, 'Byte'); q.make(); return q.getModuleCount() <= QR_MAX_MODULES ? q : null; } catch (_) { return null; }
-  }
-  function qrStages(d) {
-    var spare = {}, optional = {}, optLabels = [];
-    Object.keys(d).forEach(function (k) {
-      var g = gameOf(k);
-      if (SPARE_RE.test(k) || (g.qrSpare && g.qrSpare(k, d))) spare[k] = true;
-      (g.qrOptional || []).forEach(function (o) { if (o.keys.indexOf(k) >= 0) { optional[k] = true; if (optLabels.indexOf(o.label) < 0) optLabels.push(o.label); } });
-    });
-    var pick = function (drop) { var o = {}; Object.keys(d).forEach(function (k) { if (!drop[k]) o[k] = d[k]; }); return o; };
-    var stages = [{ d: d, level: 0 }];
-    if (Object.keys(spare).length) stages.push({ d: pick(spare), level: 1 });
-    if (Object.keys(optional).length) stages.push({ d: pick(Object.assign({}, spare, optional)), level: 2, labels: optLabels });
-    return stages;
-  }
-  async function buildQr(d, fullCode) {
-    var stages = qrStages(d);
-    for (var i = 0; i < stages.length; i++) {
-      var code = i === 0 ? fullCode : await encode(stages[i].d);
-      var url = qrUrl(code);
-      var q = makeQr(url);
-      if (q) return { qr: q, url: url, code: code, level: stages[i].level, labels: stages[i].labels || [] };
-    }
-    return null;
-  }
-  function drawQr(canvas, q) {
-    var n = q.getModuleCount(), margin = 4, cells = n + margin * 2;
-    var scale = Math.max(2, Math.floor(560 / cells));
-    canvas.width = canvas.height = cells * scale;
-    var c = canvas.getContext('2d');
-    c.fillStyle = '#fff'; c.fillRect(0, 0, canvas.width, canvas.height);
-    c.fillStyle = '#000';
-    for (var r = 0; r < n; r++) for (var col = 0; col < n; col++) if (q.isDark(r, col)) c.fillRect((col + margin) * scale, (r + margin) * scale, scale, scale);
-  }
-
   function apply(imp) {
     var cur = collect();
     localStorage.setItem(BACKUP_KEY, JSON.stringify({ at: Date.now(), d: cur }));
@@ -408,18 +364,6 @@
         var out = $('out'); out.hidden = false; out.value = code; $('btn-copy').disabled = false;
         setMsg($('outmsg'), group(d).length + 'ゲーム・' + Object.keys(d).length + '項目・' + code.length.toLocaleString('ja-JP') + '文字。全部コピーして、メモ帳などに保存してください。');
         try { out.focus({ preventScroll: true }); out.select(); } catch (_) {}
-        var res = await buildQr(d, code);
-        $('qr-box').hidden = !res; $('qr-ng').hidden = !!res;
-        if (res) {
-          drawQr($('qr'), res.qr);
-          try { $('qr-save').href = $('qr').toDataURL('image/png'); } catch (_) { $('qr-save').hidden = true; }
-          $('qr-msg').innerHTML = res.level === 0 ? 'すべての記録が入っています。読み取ると新しい端末でこのページが開き、内容を確認してから引き継げます。'
-            : res.level === 1 ? 'QRコードに収めるため、予備の控え（バックアップ・暗号化された控え）を省いています。<b>記録の本体はすべて入っています。</b>'
-            : 'QRコードに収めるため、予備の控えと次の記録を省いています：<b>' + esc(res.labels.join('、')) + '</b>。これも引き継ぐ時は、上の「コピー」でコードを送ってください。';
-          $('qr-box').dataset.level = String(res.level);
-        } else {
-          $('qr-ng').textContent = '記録が多いため、QRコードでは読み取れない長さです。上の「コピー」でコードをコピーして、LINEの自分用トーク・メール・AirDropなどで新しい端末に送ってください。';
-        }
       } catch (e) { setMsg($('outmsg'), '発行できませんでした：' + (e && e.message || e), true); }
     });
     $('btn-copy').addEventListener('click', async function () {
