@@ -294,6 +294,35 @@
         (curGroups ? '<br><span class="sum-k">この端末：</span>' + esc(c ? cl.join('・') : 'データなし') : '') + '</div>';
     }).join('');
   }
+  var backHref = null;
+  function showResult(ok, detailHtml) {
+    var old = document.getElementById('tx-result'); if (old) old.remove();
+    var ov = document.createElement('div');
+    ov.id = 'tx-result';
+    ov.className = 'tx-result ' + (ok ? 'ok' : 'ng');
+    ov.setAttribute('role', 'alertdialog');
+    ov.setAttribute('aria-modal', 'true');
+    ov.innerHTML = '<div class="tx-result-card">' +
+      '<div class="tx-result-icon" aria-hidden="true">' + (ok ? '✅' : '❌') + '</div>' +
+      '<h2 class="tx-result-title">' + (ok ? '引き継ぎ成功しました！' : '引き継ぎできませんでした') + '</h2>' +
+      '<div class="tx-result-body">' + detailHtml + '</div>' +
+      '<div class="tx-result-btns">' +
+      (ok && backHref ? '<a class="tx-rbtn primary" href="' + esc(backHref) + '">ゲームに戻る</a>' : '') +
+      (ok ? '<a class="tx-rbtn' + (backHref ? '' : ' primary') + '" href="/">トップページへ</a>' : '') +
+      '<button type="button" class="tx-rbtn" data-close>' + (ok ? '閉じる' : '閉じて入力し直す') + '</button>' +
+      '</div></div>';
+    ov.querySelector('[data-close]').addEventListener('click', function () { ov.remove(); });
+    document.body.appendChild(ov);
+    try { (ov.querySelector('.tx-rbtn.primary') || ov.querySelector('[data-close]')).focus(); } catch (_) {}
+  }
+  function restoredHtml(impData) {
+    var ids = {}; group(impData).forEach(function (g) { ids[g.game.id] = true; });
+    var now = group(collect()).filter(function (g) { return ids[g.game.id]; });
+    return '<ul class="tx-result-list">' + now.map(function (g) {
+      var lines = []; try { lines = g.game.summary(g.d) || []; } catch (_) {}
+      return '<li><b>' + esc(g.game.name) + '</b><span>' + esc(lines.join('・')) + '</span></li>';
+    }).join('') + '</ul><p class="tx-result-note">今の端末にあった記録はバックアップ済みです。ゲームを開くと反映されています。</p>';
+  }
   function listHere() {
     var gs = group(collect());
     $('here').innerHTML = gs.length ? summaryHtml(gs) : '<p class="muted">この端末（このブラウザ）にはまだ記録がありません。</p>';
@@ -301,6 +330,7 @@
   function initPage() {
     var from = new URLSearchParams(location.search).get('from') || '';
     if (/^\/[A-Za-z0-9_\-\/.]*$/.test(from) && from.indexOf('//') < 0) {
+      backHref = from;
       document.querySelectorAll('[data-back]').forEach(function (a) { a.href = from; a.hidden = false; });
     }
     listHere();
@@ -339,16 +369,26 @@
           '<p class="muted">※今の記録は自動でバックアップされます。ポイント・PTなどの数値は大きい方、持っている家やキャラは両方、ベストタイムは速い方を残します。デッキ・設定・COMの記憶はコードの内容になります。</p>';
         $('sum').hidden = false; $('applyrow').hidden = false;
         setMsg($('inmsg'), '内容を確認して「この内容で引き継ぐ」を押してください');
-      } catch (e) { setMsg($('inmsg'), (e && e.message) || 'コードを読み込めませんでした', true); }
+      } catch (e) {
+        var m = (e && e.message) || 'コードを読み込めませんでした';
+        setMsg($('inmsg'), m, true);
+        showResult(false, '<p class="tx-result-err">' + esc(m) + '</p><p class="tx-result-note">記録は何も変わっていません。発行したコードを最初から最後まで全部コピーして、もう一度貼り付けてください。</p>');
+      }
     });
     $('btn-apply').addEventListener('click', function () {
       if (!pending) return;
       try {
-        var n = Object.keys(apply(pending.d)).length;
+        var imp = pending.d;
+        var n = Object.keys(apply(imp)).length;
         reset(); $('in').value = '';
         setMsg($('inmsg'), '引き継ぎました（' + n + '項目）。ゲームを開くと反映されています。');
         listHere();
-      } catch (e) { setMsg($('inmsg'), '引き継げませんでした：' + (e && e.message || e), true); }
+        showResult(true, restoredHtml(imp));
+      } catch (e) {
+        var m = '引き継げませんでした：' + (e && e.message || e);
+        setMsg($('inmsg'), m, true);
+        showResult(false, '<p class="tx-result-err">' + esc(m) + '</p><p class="tx-result-note">ブラウザの保存容量が足りないか、プライベートモードの可能性があります。</p>');
+      }
     });
   }
 
