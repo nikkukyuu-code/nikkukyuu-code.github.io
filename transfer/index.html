@@ -58,6 +58,47 @@
   .tx-rbtn.primary { background: linear-gradient(180deg, #ffd978, #e39a1f); border-color: #ffe7a0; color: #1a1206; }
   @keyframes txFade { from { opacity: 0; } to { opacity: 1; } }
   @keyframes txPop { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .easy { padding: 14px 12px 12px; border: 3px solid #ffd24a; background: linear-gradient(180deg, rgba(255, 210, 74, 0.16), rgba(255, 140, 40, 0.08)); box-shadow: 0 0 22px rgba(255, 200, 80, 0.18); }
+  .easy h2 { margin: 0 0 10px; font-size: clamp(1.2rem, 5.4vw, 1.45rem); text-align: center; color: #ffe07a; letter-spacing: 0.06em; }
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .steps li { display: flex; align-items: flex-start; gap: 8px; padding: 9px 10px; border-radius: 12px; background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(255, 224, 122, 0.35); }
+  .step-no { flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; width: 2.1rem; height: 2.1rem; border-radius: 50%; background: linear-gradient(180deg, #ffd978, #e39a1f); color: #1a1206; font-size: 1.35rem; font-weight: 900; line-height: 1; }
+  .step-ic { flex: 0 0 auto; font-size: 1.5rem; line-height: 2.1rem; }
+  .step-tx { flex: 1 1 auto; min-width: 0; font-size: 0.95rem; line-height: 1.5; font-weight: 700; word-break: break-word; }
+  .step-tx b { color: #ffe07a; }
+  .step-btn { display: block; margin: 6px 0 0; min-height: 38px; padding: 6px 14px; font-size: 0.88rem; background: linear-gradient(180deg, #ffd978, #e39a1f); border-color: #ffe7a0; color: #1a1206; }
+  .easy-note { margin: 10px 0 0; font-size: 0.82rem; color: #f0e6d0; line-height: 1.55; }
+  .easy-note b { color: #ffe07a; }
+  .flash { animation: secFlash 1.2s ease-out; }
+  @keyframes secFlash { 0% { box-shadow: 0 0 0 4px rgba(255, 210, 74, 0.9); } 100% { box-shadow: 0 0 0 0 rgba(255, 210, 74, 0); } }
+  .easy-way { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; margin: 10px 0 6px; font-size: 1rem; color: #fff1c8; }
+  .easy-way:first-of-type { margin-top: 0; }
+  .easy-way small { font-size: 0.78em; color: #e8dcc0; font-weight: 700; }
+  .way-tag { display: inline-block; padding: 1px 8px; border-radius: 999px; background: #ff4f7a; color: #fff; font-size: 0.75rem; font-weight: 900; }
+  .qr-box { margin: 10px 0 0; padding: 12px; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--line); text-align: center; }
+  .qr-title { margin: 0 0 8px; font-weight: 800; color: #ffe07a; }
+  #qr { display: block; width: min(260px, 72vw); height: auto; aspect-ratio: 1; margin: 0 auto; background: #fff; border-radius: 6px; image-rendering: pixelated; }
+  .qr-msg { margin: 8px 0 0; font-size: 0.82rem; color: #f0e6d0; text-align: left; }
+  .qr-row { justify-content: center; margin-top: 8px; }
+  .qr-save { display: inline-flex; align-items: center; min-height: 40px; padding: 6px 16px; border-radius: 10px; border: 1px solid #d8b35a; background: #2e2415; color: #fff3d0; font-weight: 700; text-decoration: none; }
+  .qr-warn { margin: 8px 0 0; font-size: 0.8rem; color: #ffb4a8; font-weight: 700; }
+  .qr-ng { margin: 10px 0 0; padding: 10px 12px; border-radius: 10px; background: rgba(255, 90, 60, 0.14); border: 1px solid rgba(255, 120, 90, 0.5); font-size: 0.85rem; color: #ffd6cc; }
+  @media (max-width: 480px) {
+    main { padding-top: 12px; }
+    .nav { margin-bottom: 8px; }
+    h1 { font-size: 1.12rem; margin: 0 0 8px; }
+    .easy { padding: 10px 9px 9px; }
+    .easy h2 { margin-bottom: 8px; }
+    .easy-way { font-size: 0.92rem; }
+    .steps { gap: 5px; }
+    .steps li { padding: 6px 8px; gap: 6px; }
+    .step-no { width: 1.7rem; height: 1.7rem; font-size: 1.1rem; }
+    .step-ic { font-size: 1.15rem; line-height: 1.7rem; }
+    .step-tx { font-size: 0.86rem; line-height: 1.45; }
+    .step-btn { display: inline-block; margin: 4px 0 0; min-height: 34px; padding: 4px 12px; font-size: 0.82rem; }
+    .easy-note { margin-top: 8px; font-size: 0.76rem; line-height: 1.45; }
+  }
+  @media (min-width: 700px) { .step-btn { display: inline-block; margin: 0 0 0 8px; vertical-align: middle; min-height: 34px; padding: 4px 12px; } .steps li { align-items: center; } }
 </style>
 </head>
 <body>
@@ -67,6 +108,28 @@
     <a href="/">サイトトップ</a>
   </nav>
   <h1>引き継ぎ（全ゲーム共通コード）</h1>
+  <section class="easy" aria-labelledby="easy-title">
+    <h2 id="easy-title">かんたん引き継ぎ 3ステップ</h2>
+    <h3 class="easy-way"><span class="way-tag">おすすめ</span>📷 QRコードでかんたん引き継ぎ<small>（2台が手元にある時）</small></h3>
+    <ol class="steps">
+      <li><span class="step-no" aria-hidden="true">1</span><span class="step-ic" aria-hidden="true">📱</span>
+        <div class="step-tx"><b>今の端末</b>で「コードを発行」（QRコードが出ます）<button type="button" class="step-btn" data-go="export">コードを発行へ ↓</button></div></li>
+      <li><span class="step-no" aria-hidden="true">2</span><span class="step-ic" aria-hidden="true">📷</span>
+        <div class="step-tx"><b>新しい端末のカメラ</b>でQRコードを読み取る</div></li>
+      <li><span class="step-no" aria-hidden="true">3</span><span class="step-ic" aria-hidden="true">✅</span>
+        <div class="step-tx">開いたページで内容を確認して<b>「この内容で引き継ぐ」</b></div></li>
+    </ol>
+    <h3 class="easy-way">✉️ 離れた端末へ送る時（コピーして送る）</h3>
+    <ol class="steps">
+      <li><span class="step-no" aria-hidden="true">1</span><span class="step-ic" aria-hidden="true">📋</span>
+        <div class="step-tx"><b>今の端末</b>で「コードを発行」を押して「コピー」</div></li>
+      <li><span class="step-no" aria-hidden="true">2</span><span class="step-ic" aria-hidden="true">✉️</span>
+        <div class="step-tx">LINEの自分用トーク・メモ・メール・AirDropなどで<b>新しい端末に送る</b></div></li>
+      <li><span class="step-no" aria-hidden="true">3</span><span class="step-ic" aria-hidden="true">📲</span>
+        <div class="step-tx"><b>新しい端末</b>でこのページを開き、「コードを入力」に貼り付けて「この内容で引き継ぐ」<button type="button" class="step-btn" data-go="import">コードを入力へ ↓</button></div></li>
+    </ol>
+    <p class="easy-note">※コードはとても長いので、<b>手で打たずに「コピー」→「貼り付け」</b>してください。<br>※新しい端末でも<b>同じサイト（nikkukyuu-code.github.io）</b>を開いてください。<br>※<b>QRコードやコードは他の人に見せたり、SNSに投稿したりしないでください</b>（あなたの記録が他の人の端末に入ってしまいます）。</p>
+  </section>
   <p class="lead">このサイトの<strong>すべてのゲームの記録</strong>（PT・ポイント・持っているキャラや家・デッキ・ランキング・設定・COMの記憶など）を<strong>1つのコード</strong>にまとめて、別の端末やブラウザへ引き継げます。</p>
   <div class="notice" role="note">
     <strong>⚠ 記録はこの端末のブラウザ内に保存されています。</strong>次の場合は消えることがあります：
@@ -83,14 +146,22 @@
     <div id="here" class="sum"></div>
   </section>
 
-  <section>
+  <section id="sec-export">
     <h2>① コードを発行（控える・別の端末へ）</h2>
     <div class="row"><button type="button" class="primary" id="btn-export">コードを発行</button><button type="button" id="btn-copy" disabled>コピー</button></div>
     <textarea id="out" readonly hidden aria-label="発行したコード"></textarea>
     <p class="msg" id="outmsg"></p>
+    <div class="qr-box" id="qr-box" hidden>
+      <p class="qr-title">📷 新しい端末のカメラで読み取ってください</p>
+      <canvas id="qr" width="260" height="260" aria-label="引き継ぎ用QRコード"></canvas>
+      <p class="qr-msg" id="qr-msg"></p>
+      <div class="row qr-row"><a class="qr-save" id="qr-save" download="nikkukyuu-hikitsugi-qr.png" href="#">QR画像を保存</a></div>
+      <p class="qr-warn">⚠ このQRコードは他の人に見せたり、SNSに投稿したりしないでください。</p>
+    </div>
+    <p class="qr-ng" id="qr-ng" hidden></p>
   </section>
 
-  <section>
+  <section id="sec-import">
     <h2>② コードを入力（この端末に引き継ぐ）</h2>
     <textarea id="in" placeholder="発行したコードを貼り付け" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="コードを入力"></textarea>
     <div class="row"><button type="button" id="btn-check">内容を確認</button></div>
@@ -112,6 +183,7 @@
   <nav class="nav"><a class="back" data-back hidden href="/">← ゲームに戻る</a><a href="/">サイトトップ</a></nav>
   <footer><a href="/privacy.html">プライバシーポリシー</a></footer>
 </main>
-<script src="transfer.js?v=20260928040924"></script>
+<script src="qrcode.js?v=20260928041908"></script>
+<script src="transfer.js?v=20260928041908"></script>
 </body>
 </html>
