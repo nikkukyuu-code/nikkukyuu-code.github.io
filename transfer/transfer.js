@@ -85,6 +85,18 @@
       level: Math.max(Number(x.level) || 1, Number(y.level) || 1),
     }));
   }
+  function houseComRecord(a, b) {
+    // {tier: {w, l}} COM-only win/loss: per tier keep the record with more matches (never decreases).
+    var x = json(a, {}), y = json(b, {}), out = {};
+    [x, y].forEach(function (o) {
+      if (!o || typeof o !== 'object' || Array.isArray(o)) return;
+      Object.keys(o).forEach(function (k) {
+        var v = o[k] || {}, w = Math.max(0, Math.floor(Number(v.w) || 0)), l = Math.max(0, Math.floor(Number(v.l) || 0)), c = out[k];
+        if (!c || w + l > c.w + c.l || (w + l === c.w + c.l && w > c.w)) out[k] = { w: w, l: l };
+      });
+    });
+    return JSON.stringify(out);
+  }
   function houseTut(a, b) {
     var n = function (s) {
       if (s === '1' || s === 'done' || s === 'skip') return { done: true, seen: {} };
@@ -155,6 +167,8 @@
         'househouse-player-trap-heat-v1_legacy_bak': 'current',
         'househouse-player-trap-heat-v1': function () { return undefined; }, // retired (peeked data)
         'househouse-ingame-tut-v1': houseTut,
+        'househouse-com-record-v1': houseComRecord, // COM対戦の勝敗（敵Lvのもと）
+        'househouse-com-record-v1-bak': houseComRecord,
         ht_mute: 'imported',
       },
       summary: function (d) {
@@ -162,7 +176,10 @@
         var m = json(d['househouse-com-memory-v1'] || '{}', {});
         var places = 0; ['trapHeat', 'safeHeat', 'chestHeat'].forEach(function (f) { if (m[f] && typeof m[f] === 'object') places += Object.keys(m[f]).length; });
         return ['ポイント ' + (num(d['househouse-points-v1']) || 0).toLocaleString('ja-JP') + '・持っている家 ' + (Array.isArray(owned) ? owned.length : 0) + '軒',
-          'COM対戦 ' + (Number(m.matches) || 0) + '回・COMが覚えた場所 ' + places + 'マス'];
+          'COM対戦 ' + (Number(m.matches) || 0) + '回・COMが覚えた場所 ' + places + 'マス'].concat((function () {
+            var r = json(d['househouse-com-record-v1'] || '{}', {}).com;
+            return r && (r.w || r.l) ? ['COM戦の成績 ' + (Number(r.w) || 0) + '勝' + (Number(r.l) || 0) + '敗'] : [];
+          })());
       },
     },
     {
