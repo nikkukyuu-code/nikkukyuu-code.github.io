@@ -71,6 +71,15 @@
       deck: Array.isArray(y.deck) && y.deck.length ? y.deck : x.deck,
     }));
   }
+  function spaceComRecord(a, b) {
+    // COM勝率: per difficulty keep the record with MORE matches (never reduces)
+    var x = json(a, {}), y = json(b, {});
+    if (!x || typeof x !== 'object') x = {};
+    if (!y || typeof y !== 'object') y = {};
+    var side = function (s) { return { w: Math.max(0, Math.floor(Number(s && s.w) || 0)), l: Math.max(0, Math.floor(Number(s && s.l) || 0)) }; };
+    var pick = function (p, q) { p = side(p); q = side(q); return (q.w + q.l) > (p.w + p.l) ? q : p; };
+    return JSON.stringify(Object.assign({}, x, y, { v: 1, normal: pick(x.normal, y.normal), strong: pick(x.strong, y.strong) }));
+  }
   function houseComMemory(a, b) {
     var x = json(a, {}), y = json(b, {});
     // Only fair-play memory (fair>=2) carries trap positions; older data may be peeked → dropped.
@@ -148,10 +157,18 @@
         shootingOnline_meta_bak: spaceMeta,
         shootingOnline_newUnits: 'union',
         shootingOnline_tutorialDone: 'or',
+        shootingOnline_comRecord: spaceComRecord, // COM対戦の勝敗（難易度ごとに試合数の多い方）
+        shootingOnline_comRecord_bak: spaceComRecord,
       },
       summary: function (d) {
         var m = json(d.shootingOnline_meta || d.shootingOnline_meta_bak || '{}', {});
-        return ['PT ' + (Math.floor(Number(m.pt) || 0)).toLocaleString('ja-JP') + '・持っているキャラ ' + (Array.isArray(m.owned) ? m.owned.length : 0) + '体' + (Array.isArray(m.deck) ? '・デッキ ' + m.deck.length + '枠' : '')];
+        var out = ['PT ' + (Math.floor(Number(m.pt) || 0)).toLocaleString('ja-JP') + '・持っているキャラ ' + (Array.isArray(m.owned) ? m.owned.length : 0) + '体' + (Array.isArray(m.deck) ? '・デッキ ' + m.deck.length + '枠' : '')];
+        var r = json(d.shootingOnline_comRecord || d.shootingOnline_comRecord_bak || 'null', null);
+        if (r && typeof r === 'object') {
+          var line = function (lab, s) { var w = Math.floor(Number(s && s.w) || 0), l = Math.floor(Number(s && s.l) || 0); return lab + ' ' + w + '勝' + l + '敗'; };
+          out.push('COM対戦 ' + line('普通', r.normal) + '・' + line('強い', r.strong));
+        }
+        return out;
       },
     },
     {
