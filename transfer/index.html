@@ -2,6 +2,31 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8" />
+<!--nk-autoupdate--><script>
+/* 自動更新: 新しい版が公開されたら、安全なとき（タイトル画面など・試合中でない）だけ自動で読み込み直す。記録(localStorage)には触れない。 */
+(function () {
+  var PAGE_LABEL = '2026-10-05 01:29:40';
+  var URL = '/version.json', KEY = 'nkReloadFor:transfer', EVERY = 0;
+  function safe() { try { return !!(!location.hash && !document.getElementById('tx-result') && !((document.getElementById('in') || {}).value) && ((document.getElementById('out') || {}).hidden !== false) && !(document.activeElement && /^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName))); } catch (e) { return false; } }
+  var busy = false;
+  function check() {
+    if (busy || document.visibilityState === 'hidden' || !safe()) return;
+    busy = true;
+    fetch(URL + '?_=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+      busy = false;
+      var v = d && d.label;
+      if (!v || v === PAGE_LABEL || !safe()) return;
+      try { if (sessionStorage.getItem(KEY) === v) return; sessionStorage.setItem(KEY, v); } catch (e) { return; }
+      var q = location.search.replace(/^\?/, '').split('&').filter(function (s) { return s && s.indexOf('r=') !== 0; }); q.push('r=' + String(v).replace(/[^0-9]/g, '')); location.replace(location.pathname + '?' + q.join('&') + location.hash);
+    }).catch(function () { busy = false; });
+  }
+  window.__nkCheckUpdate = check;
+  function start() { setTimeout(check, 1500); if (EVERY > 0) setInterval(check, EVERY * 1000); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') check(); });
+  window.addEventListener('pageshow', function (e) { if (e.persisted) check(); });
+})();
+</script><!--/nk-autoupdate-->
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>引き継ぎ（全ゲーム共通コード） — nikkukyuu-code</title>
 <meta name="description" content="スペーストリックバトル・トリックハウスバトル・7GET将棋の記録を、1つのコードで別の端末に引き継げます。" />
@@ -163,6 +188,6 @@
   <nav class="nav"><a class="back" data-back hidden href="/">← ゲームに戻る</a><a href="/">サイトトップ</a></nav>
   <footer><a href="/privacy.html">プライバシーポリシー</a></footer>
 </main>
-<script src="transfer.js?v=20261005011402"></script>
+<script src="transfer.js?v=20261005012940"></script>
 </body>
 </html>
