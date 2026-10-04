@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>nikkukyuu-code — カジュアルなネット対戦ゲーム</title>
-<meta name="description" content="ネット対戦をカジュアルに楽しめるブラウザゲームを公開しているサイトです。スペーストリックバトル、7GET将棋、トリックハウスバトルなど。" />
+<meta name="description" content="ネット対戦をカジュアルに楽しめるブラウザゲームを公開しているサイトです。スペーストリックバトル、7GET将棋、トリックハウスバトル、猫ハウスつりなど。" />
 <link rel="canonical" href="https://nikkukyuu-code.github.io/" />
 <meta property="og:title" content="nikkukyuu-code — カジュアルなネット対戦ゲーム" />
 <meta property="og:description" content="スペーストリックバトルなど、無料のブラウザオンライン対戦ゲームを公開しています。" />
@@ -152,6 +152,7 @@
   .card[data-game="space"] { --accent-local: var(--cyan); }
   .card[data-game="shogi"] { --accent-local: var(--gold); }
   .card[data-game="house"] { --accent-local: var(--green); }
+  .card[data-game="neko"] { --accent-local: #ffb347; }
 
   .card-body {
     display: grid;
@@ -223,6 +224,11 @@
     background: linear-gradient(135deg, #a67c2a, var(--gold));
     color: #1a1208;
     box-shadow: 0 8px 22px rgba(232, 197, 106, 0.28);
+  }
+  .card[data-game="neko"] a.play {
+    background: linear-gradient(135deg, #d9822b, #ffb347);
+    color: #1f1206;
+    box-shadow: 0 8px 22px rgba(255, 179, 71, 0.28);
   }
   .card[data-game="house"] a.play {
     background: linear-gradient(135deg, #2f9a5f, var(--green));
@@ -423,6 +429,14 @@
         </div>
       </article>
 
+<article class="card" data-game="neko">
+        <div class="card-body">
+          <h3>猫ハウスつり<span class="beta-badge">β版</span> <span class="visit-count" data-visit="neko" aria-live="polite"></span></h3>
+          <p class="blurb">猫がたくさん住む猫ハウスで、猫を釣るひとり用ゲームです。エサを選んでキャスト、ウキが沈んだら合わせて、糸が切れないようにリールを巻きます。釣った猫は図鑑に集まります（全13種類）。</p>
+          <a class="play" href="./nekotsuri/">遊ぶ</a>
+        </div>
+      </article>
+
 <article class="card" data-game="shogi">
         <div class="card-body">
           <h3>7GET将棋<span class="beta-badge">β版</span> <span class="visit-count" data-visit="shogi" aria-live="polite"></span></h3>
@@ -443,7 +457,7 @@
       <div class="home-tip"><p class="ht-h">📱 iPhoneは「ホーム画面に追加」で消えにくくなります</p><ol><li>Safariで遊びたいページを開く</li><li>画面下の共有ボタン（四角に上矢印のマーク）を押す</li><li>「ホーム画面に追加」を選ぶ</li><li>ホーム画面のアイコンから遊ぶ</li></ol><p class="ht-n">※ホーム画面から開いたときはSafariとは記録が別になるので、最初にSafariで<a href="/transfer/">引き継ぎコード</a>を作り、ホーム画面から開いた方で貼り付けてください。</p></div>
       <p>スマホを買い替える前に<strong>「引き継ぎ」</strong>ボタンでコードを作って保存してください。<strong>すべてのゲームの記録が1つのコード</strong>にまとまります。新しいスマホでは同じページの「コードを入力」で記録を戻せます（PT・ポイントなどは減りません）。</p>
       <a class="tx-link" href="/transfer/">引き継ぎ（全ゲーム共通コード）を開く →</a>
-      <p class="tx-games">対応：<strong>スペーストリックバトル</strong>（PT・キャラ・デッキ）／<strong>トリックハウスバトル</strong>（ポイント・家・COMが覚えた場所）／<strong>7GET将棋</strong>（ランキング・ニックネーム・設定）。今後追加するゲームの記録も同じコードに入ります。各ゲームのタイトル画面の「引き継ぎ」ボタンからも開けます。</p>
+      <p class="tx-games">対応：<strong>スペーストリックバトル</strong>（PT・キャラ・デッキ）／<strong>トリックハウスバトル</strong>（ポイント・家・COMが覚えた場所）／<strong>7GET将棋</strong>（ランキング・ニックネーム・設定）／<strong>猫ハウスつり</strong>（コイン・図鑑・メダル・エサ・竿）。今後追加するゲームの記録も同じコードに入ります。各ゲームのタイトル画面の「引き継ぎ」ボタンからも開けます。</p>
     </section>
     <section class="about">
       <h2>このサイトについて</h2>
@@ -461,7 +475,8 @@
   var ENDPOINTS = {
     space: "https://abacus.jasoncameron.dev/get/nikkukyuu/shooting-online",
     house: "https://abacus.jasoncameron.dev/get/nikkukyuu/househouse",
-    shogi: "https://abacus.jasoncameron.dev/get/nikkukyuu/shogi"
+    shogi: "https://abacus.jasoncameron.dev/get/nikkukyuu/shogi",
+    neko: "https://abacus.jasoncameron.dev/get/nikkukyuu/nekotsuri"
   };
   var STORAGE_PREFIX = "hub_visitLast_";
 

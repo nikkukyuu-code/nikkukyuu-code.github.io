@@ -148,6 +148,38 @@
     return out;
   }
 
+  function nekoSave(a, b) {
+    // 猫ハウスつり: counters only go up. Coins = earned - spent → keep the (earned, spent) PAIR with more coins,
+    // baits likewise per bait (bought, used) pair with more left; dex / medals / stage / rod / stats = max.
+    var x = json(a, {}), y = json(b, {});
+    if (!x || typeof x !== 'object' || Array.isArray(x)) x = {};
+    if (!y || typeof y !== 'object' || Array.isArray(y)) y = {};
+    var N = function (v) { v = Number(v); return Number.isFinite(v) && v > 0 ? v : 0; };
+    var O = function (v) { return v && typeof v === 'object' && !Array.isArray(v) ? v : {}; };
+    var mx = function (p, q) { var o = {}; [O(p), O(q)].forEach(function (m) { Object.keys(m).forEach(function (k) { o[k] = Math.max(o[k] || 0, N(m[k])); }); }); return o; };
+    var cx = N(x.earned) - N(x.spent), cy = N(y.earned) - N(y.spent);
+    var pc = cy > cx || (cy === cx && N(y.earned) > N(x.earned)) ? y : x;
+    var bb = {}, bu = {};
+    Object.keys(Object.assign({}, O(x.baitBought), O(y.baitBought))).forEach(function (k) {
+      var lx = N(O(x.baitBought)[k]) - N(O(x.baitUsed)[k]), ly = N(O(y.baitBought)[k]) - N(O(y.baitUsed)[k]);
+      var s = ly > lx || (ly === lx && N(O(y.baitBought)[k]) > N(O(x.baitBought)[k])) ? y : x;
+      bb[k] = N(O(s.baitBought)[k]); bu[k] = N(O(s.baitUsed)[k]);
+    });
+    var dex = {};
+    [O(x.dex), O(y.dex)].forEach(function (m) {
+      Object.keys(m).forEach(function (k) {
+        var e = O(m[k]), c = dex[k] || { n: 0, best: 0, first: 0 };
+        dex[k] = { n: Math.max(c.n, N(e.n)), best: Math.max(c.best, N(e.best)), first: c.first && N(e.first) ? Math.min(c.first, N(e.first)) : (c.first || N(e.first)) };
+      });
+    });
+    return JSON.stringify({
+      v: 1, earned: N(pc.earned), spent: Math.min(N(pc.spent), N(pc.earned)), baitBought: bb, baitUsed: bu,
+      rod: Math.max(1, N(x.rod), N(y.rod)), dex: dex, stageMax: Math.max(1, N(x.stageMax), N(y.stageMax)),
+      stageBest: mx(x.stageBest, y.stageBest), medals: mx(x.medals, y.medals), stats: mx(x.stats, y.stats),
+      updated: Math.max(N(x.updated), N(y.updated)),
+    });
+  }
+
   var GAMES = [
     {
       id: 'space', name: 'スペーストリックバトル',
@@ -212,6 +244,22 @@
         var name = String(d['shogi-player-name'] || '').trim();
         Object.keys(labels).forEach(function (k) { if (b[k] != null) out.push(labels[k] + ' ' + formatMs(b[k])); });
         return ['ニックネーム ' + (name || '（未設定）'), out.length ? 'ベスト：' + out.join('／') : 'ランキング記録なし'];
+      },
+    },
+    {
+      id: 'neko', name: '猫ハウスつり',
+      match: function (k) { return k.indexOf('nekotsuri-') === 0 || k.indexOf('nekotsuri_') === 0; },
+      rules: {
+        'nekotsuri-save-v1': nekoSave, // コイン(多い方の組)・図鑑/メダル/ステージ/竿(大きい方)
+        'nekotsuri-save-v1-bak': nekoSave,
+        'nekotsuri-pref-v1': 'imported',
+      },
+      summary: function (d) {
+        var s = json(d['nekotsuri-save-v1'] || d['nekotsuri-save-v1-bak'] || '{}', {}) || {};
+        var coins = Math.max(0, Math.floor((Number(s.earned) || 0) - (Number(s.spent) || 0)));
+        var kinds = 0, total = 0, dx = s.dex && typeof s.dex === 'object' ? s.dex : {};
+        Object.keys(dx).forEach(function (k) { var n = Number(dx[k] && dx[k].n) || 0; if (n > 0) { kinds++; total += n; } });
+        return ['コイン ' + coins.toLocaleString('ja-JP') + '・図鑑 ' + kinds + '種（' + total + '匹）・ステージ ' + (Math.max(1, Number(s.stageMax) || 1)) + 'まで・メダル ' + Object.keys(s.medals && typeof s.medals === 'object' ? s.medals : {}).length + '個'];
       },
     },
   ];
