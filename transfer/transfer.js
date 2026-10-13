@@ -180,6 +180,15 @@
     });
   }
 
+  function spaceRankKey(a, b, ctx) {
+    // Ranking identity moves as a set: if the code carries an id, take the code's id/secret/nickname;
+    // otherwise keep this device's (never blank out an existing ranking account).
+    var d = ctx && ctx.imp ? ctx.imp : null;
+    var hasImpId = d ? !!(d.shootingOnline_rankId || d.shootingOnline_rankId_bak) : !!b;
+    if (hasImpId) return b != null && b !== '' ? b : a;
+    return a != null && a !== '' ? a : b;
+  }
+
   var GAMES = [
     {
       id: 'space', name: 'スペーストリックバトル',
@@ -191,6 +200,13 @@
         shootingOnline_tutorialDone: 'or',
         shootingOnline_comRecord: spaceComRecord, // COM対戦の勝敗（難易度ごとに試合数の多い方）
         shootingOnline_comRecord_bak: spaceComRecord,
+        // 世界ランキング: プレイヤーID・秘密キー・ニックネームは3つ一緒に移す（コード側の本人情報）
+        shootingOnline_rankId: spaceRankKey,
+        shootingOnline_rankId_bak: spaceRankKey,
+        shootingOnline_rankSecret: spaceRankKey,
+        shootingOnline_rankSecret_bak: spaceRankKey,
+        shootingOnline_nickname: spaceRankKey,
+        shootingOnline_nickname_bak: spaceRankKey,
       },
       summary: function (d) {
         var m = json(d.shootingOnline_meta || d.shootingOnline_meta_bak || '{}', {});
@@ -200,6 +216,8 @@
           var line = function (lab, s) { var w = Math.floor(Number(s && s.w) || 0), l = Math.floor(Number(s && s.l) || 0); return lab + ' ' + w + '勝' + l + '敗'; };
           out.push('COM対戦 ' + line('普通', r.normal) + '・' + line('強い', r.strong));
         }
+        var nick = d.shootingOnline_nickname || d.shootingOnline_nickname_bak;
+        if (d.shootingOnline_rankId || d.shootingOnline_rankId_bak) out.push('ランキング名 ' + (nick || '名無し') + '（メダルも引き継ぎ）');
         return out;
       },
     },
