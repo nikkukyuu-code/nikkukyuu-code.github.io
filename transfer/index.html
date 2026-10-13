@@ -5,7 +5,7 @@
 <!--nk-autoupdate--><script>
 /* 自動更新: 新しい版が公開されたら、安全なとき（タイトル画面など・試合中でない）だけ自動で読み込み直す。記録(localStorage)には触れない。 */
 (function () {
-  var PAGE_LABEL = '2026-10-14 02:34:54';
+  var PAGE_LABEL = '2026-10-14 02:47:52';
   var URL = '/version.json', KEY = 'nkReloadFor:transfer', EVERY = 0;
   function safe() { try { return !!(!location.hash && !document.getElementById('tx-result') && !((document.getElementById('in') || {}).value) && ((document.getElementById('out') || {}).hidden !== false) && !(document.activeElement && /^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName))); } catch (e) { return false; } }
   var busy = false;
@@ -188,6 +188,6 @@
   <nav class="nav"><a class="back" data-back hidden href="/">← ゲームに戻る</a><a href="/">サイトトップ</a></nav>
   <footer><a href="/privacy.html">プライバシーポリシー</a></footer>
 </main>
-<script src="transfer.js?v=20261014023454"></script>
+<script src="transfer.js?v=20261014024752"></script>
 </body>
 </html>

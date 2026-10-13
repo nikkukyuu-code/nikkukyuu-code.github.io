@@ -180,6 +180,12 @@
     });
   }
 
+  function shogiOnlineKey(a, b, ctx) {
+    var d = ctx && ctx.imp ? ctx.imp : null;
+    var hasImpId = d ? !!(d['shogi-rank-online-id'] || d['shogi-rank-online-id-bak']) : !!b;
+    if (hasImpId) return b != null && b !== '' ? b : a;
+    return a != null && a !== '' ? a : b;
+  }
   function spaceRankKey(a, b, ctx) {
     // Ranking identity moves as a set: if the code carries an id, take the code's id/secret/nickname;
     // otherwise keep this device's (never blank out an existing ranking account).
@@ -254,6 +260,8 @@
       match: function (k) { return k.indexOf('shogi-') === 0 || k.indexOf('shogi_') === 0; },
       rules: (function () {
         var r = { 'shogi-rank-plain-v2': shogiRanks, 'shogi-player-id': 'imported', 'shogi-player-name': 'imported', 'shogi-pref-v1': 'imported' };
+        // オンラインランキング: ID・秘密キー・名前(-bak)はセットで移す
+        ['shogi-rank-online-id', 'shogi-rank-online-id-bak', 'shogi-rank-online-secret', 'shogi-rank-online-secret-bak', 'shogi-player-name-bak'].forEach(function (k) { r[k] = shogiOnlineKey; });
         SHOGI_SEALED.forEach(function (k) { r[k] = shogiSealed; });
         return r;
       })(),
