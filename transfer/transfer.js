@@ -25,7 +25,7 @@
   'use strict';
   var GID = 'NK', VER = '1';
   var BACKUP_KEY = 'nk-transfer-preimport';
-  var EXCLUDE = [/_visitLast/, /_battleLast/, /^hub_visitLast_/, /preimport/];
+  var EXCLUDE = [/_visitLast/, /_battleLast/, /^hub_visitLast_/, /preimport/, /^nkTransfer/];
 
   /* ---------- helpers ---------- */
   function num(s) { var n = Number(s); return s != null && s !== '' && Number.isFinite(n) ? n : null; }
@@ -435,6 +435,80 @@
     var gs = group(collect());
     $('here').innerHTML = gs.length ? summaryHtml(gs) : '<p class="muted">この端末（このブラウザ）にはまだ記録がありません。</p>';
   }
+  /* ---------- short 引き継ぎID (server: Worker "transfer"; localhost always uses "transfer-test") ---------- */
+  var LOCALHOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+  var TX_API = LOCALHOST ? 'https://transfer-test.nikkukyuu.workers.dev' : 'https://transfer.nikkukyuu.workers.dev';
+  var K_TXID = 'nkTransferId', K_TXPIN = 'nkTransferPin'; // NEW keys (+ _bak); never renamed
+  var ALPHA = '23456789ABCDEFGHJKMNPQRSTUVWXYZ';
+  function lsGet(k) { try { return localStorage.getItem(k) || localStorage.getItem(k + '_bak') || ''; } catch (_) { return ''; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, v); localStorage.setItem(k + '_bak', v); } catch (_) {} }
+  function normId(s) { return String(s || '').toUpperCase().replace(/[０-９Ａ-Ｚａ-ｚ]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 0xFEE0); }).toUpperCase().replace(/[^0-9A-Z]/g, ''); }
+  function fmtId(id) { return id.slice(0, 4) + '-' + id.slice(4); }
+  function normPin(s) { return String(s || '').replace(/[０-９]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 0xFEE0); }).replace(/\D/g, ''); }
+  function newPin() { var a = crypto.getRandomValues(new Uint32Array(1))[0] % 1000000; return String(a).padStart(6, '0'); }
+  async function txKeys(id, pin) {
+    var te = new TextEncoder();
+    var base = await crypto.subtle.importKey('raw', te.encode(id + '|' + pin), 'PBKDF2', false, ['deriveBits']);
+    var bits = new Uint8Array(await crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt: te.encode('nk-transfer-v1|' + id), iterations: 150000 }, base, 512));
+    var aes = await crypto.subtle.importKey('raw', bits.slice(0, 32), 'AES-GCM', false, ['encrypt', 'decrypt']);
+    var auth = Array.prototype.map.call(bits.slice(32), function (x) { return x.toString(16).padStart(2, '0'); }).join('');
+    return { aes: aes, auth: auth };
+  }
+  async function txApi(path, body) {
+    var ctl = new AbortController(); var t = setTimeout(function () { ctl.abort(); }, 15000);
+    try {
+      var r = await fetch(TX_API + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {}), signal: ctl.signal, cache: 'no-store' });
+      var j = await r.json().catch(function () { return {}; });
+      if (!r.ok || !j.ok) return { ok: false, status: r.status, error: j.error, message: j.message || ('通信エラー ' + r.status) };
+      return j;
+    } catch (e) { return { ok: false, offline: true, message: 'サーバーに接続できません。電波の良い所でもう一度お試しください' }; }
+    finally { clearTimeout(t); }
+  }
+  async function txSeal(id, pin, data) {
+    var k = await txKeys(id, pin);
+    var code = await encode(data);
+    var iv = crypto.getRandomValues(new Uint8Array(12));
+    var ct = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv }, k.aes, new TextEncoder().encode(code)));
+    return { auth: k.auth, blob: bytesToB64url(iv) + '.' + bytesToB64url(ct) };
+  }
+  async function txOpen(id, pin, blob, aes) {
+    var parts = String(blob).split('.');
+    var pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64urlToBytes(parts[0]) }, aes, b64urlToBytes(parts[1]));
+    return decode(new TextDecoder().decode(pt));
+  }
+  /** Issue (or refresh under the saved ID) → {ok, id, pin, expires_at, refreshed} */
+  async function issueId() {
+    var id = normId(lsGet(K_TXID)), pin = normPin(lsGet(K_TXPIN)), refreshed = true;
+    for (var tries = 0; tries < 2; tries++) {
+      if (!(id.length === 8 && pin.length === 6)) {
+        var r = await txApi('/issue');
+        if (!r.ok) return r;
+        id = r.id; pin = newPin(); refreshed = false;
+      }
+      var s = await txSeal(id, pin, collect());
+      var w = await txApi('/save', { id: id, auth: s.auth, blob: s.blob });
+      if (w.ok) { lsSet(K_TXID, id); lsSet(K_TXPIN, pin); return { ok: true, id: id, pin: pin, expires_at: w.expires_at, refreshed: refreshed }; }
+      if (w.status === 404 || w.status === 403) { id = ''; pin = ''; continue; } // expired / not usable → new ID
+      return w;
+    }
+    return { ok: false, message: 'もう一度お試しください' };
+  }
+  async function restoreId(idIn, pinIn) {
+    var id = normId(idIn), pin = normPin(pinIn);
+    if (id.length !== 8 || [].some.call(id, function (c) { return ALPHA.indexOf(c) < 0; })) return { ok: false, message: 'IDは8文字です（例：AB2C-D3EF）。0・O・1・I・Lは使われていません' };
+    if (pin.length !== 6) return { ok: false, message: 'PINは6けたの数字です' };
+    var k = await txKeys(id, pin);
+    var r = await txApi('/load', { id: id, auth: k.auth });
+    if (!r.ok) return r;
+    var obj;
+    try { obj = await txOpen(id, pin, r.blob, k.aes); } catch (e) { return { ok: false, message: 'データを開けませんでした' }; }
+    var imp = obj.d;
+    apply(imp); // merge never decreases progress; current data is backed up first
+    // keep using the same ID on this device so the next 発行 refreshes it
+    lsSet(K_TXID, id); lsSet(K_TXPIN, pin);
+    return { ok: true, imp: imp, at: r.updated_at };
+  }
+
   function initPage() {
     var from = new URLSearchParams(location.search).get('from') || '';
     if (/^\/[A-Za-z0-9_\-\/.]*$/.test(from) && from.indexOf('//') < 0) {
@@ -448,81 +522,57 @@
         var sec = $(imp ? 'sec-import' : 'sec-export');
         sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
         sec.classList.remove('flash'); void sec.offsetWidth; sec.classList.add('flash');
-        var target = $(imp ? 'in' : 'btn-export');
+        var target = $(imp ? 'in-id' : 'btn-issue');
         setTimeout(function () { try { target.focus({ preventScroll: true }); } catch (_) { target.focus(); } }, 350);
       });
     });
-    var pending = null;
-    function readFragment() {
-      var h = location.hash || '';
-      if (h.indexOf('#code=') !== 0) return;
-      var code = h.slice(6);
-      try { code = decodeURIComponent(code); } catch (_) {}
-      try { history.replaceState(null, '', location.pathname + location.search); } catch (_) { location.hash = ''; }
-      $('in').value = code;
-      $('sec-import').scrollIntoView({ block: 'start' });
-      $('btn-check').click();
-    }
-    setTimeout(readFragment, 0);
-    window.addEventListener('hashchange', readFragment);
-    $('btn-export').addEventListener('click', async function () {
+    $('btn-issue').addEventListener('click', async function () {
+      var btn = this; btn.disabled = true; window.__nkTxBusy = true;
+      setMsg($('outmsg'), '発行中…');
       try {
-        var d = collect();
-        var code = await encode(d);
-        var out = $('out'); out.hidden = false; out.value = code; $('btn-copy').disabled = false;
-        setMsg($('outmsg'), group(d).length + 'ゲーム・' + Object.keys(d).length + '項目・' + code.length.toLocaleString('ja-JP') + '文字。全部コピーして、メモ帳などに保存してください。');
-        try { out.focus({ preventScroll: true }); out.select(); } catch (_) {}
+        var r = await issueId();
+        if (!r.ok) { setMsg($('outmsg'), r.message || '発行できませんでした', true); return; }
+        $('id-val').textContent = fmtId(r.id); $('pin-val').textContent = r.pin;
+        var exp = new Date(r.expires_at);
+        $('id-exp').textContent = '有効期限：' + exp.toLocaleDateString('ja-JP') + 'まで（最後に発行してから90日）';
+        $('idcard').hidden = false;
+        setMsg($('outmsg'), (r.refreshed ? '同じIDのまま、今の記録に更新しました。' : '発行しました。') + 'IDとPINをメモかスクショしてください。');
       } catch (e) { setMsg($('outmsg'), '発行できませんでした：' + (e && e.message || e), true); }
+      finally { btn.disabled = false; window.__nkTxBusy = false; }
     });
-    $('btn-copy').addEventListener('click', async function () {
-      var out = $('out');
-      try {
-        if (navigator.clipboard && navigator.clipboard.writeText) await navigator.clipboard.writeText(out.value);
-        else { out.focus(); out.select(); document.execCommand('copy'); }
-        setMsg($('outmsg'), 'コピーしました（' + out.value.length.toLocaleString('ja-JP') + '文字）');
-      } catch (e) {
-        try { out.focus(); out.select(); document.execCommand('copy'); setMsg($('outmsg'), 'コピーしました'); }
-        catch (_) { setMsg($('outmsg'), '自動コピーできませんでした。枠内を長押しして全選択→コピーしてください', true); }
-      }
+    $('btn-copyid').addEventListener('click', async function () {
+      var t = '引き継ぎID：' + $('id-val').textContent + '\nPIN：' + $('pin-val').textContent + '\n' + location.origin + '/transfer/';
+      try { await navigator.clipboard.writeText(t); setMsg($('outmsg'), 'コピーしました'); }
+      catch (_) { setMsg($('outmsg'), 'コピーできませんでした。画面をスクショしてください', true); }
     });
-    var reset = function () { pending = null; $('sum').hidden = true; $('applyrow').hidden = true; };
-    $('in').addEventListener('input', reset);
-    $('btn-cancel').addEventListener('click', function () { reset(); setMsg($('inmsg'), ''); });
-    $('btn-check').addEventListener('click', async function () {
-      reset();
-      try {
-        var obj = await decode($('in').value);
-        pending = obj;
-        var when = new Date(obj.t || 0);
-        $('sum').innerHTML = '<p>コード発行日時：' + esc(isNaN(when) ? '不明' : when.toLocaleString('ja-JP')) + '・' + Object.keys(obj.d).length + '項目</p>' +
-          summaryHtml(group(obj.d), group(collect())) +
-          '<p class="muted">※今の記録は自動でバックアップされます。ポイント・PTなどの数値は大きい方、持っている家やキャラは両方、ベストタイムは速い方を残します。デッキ・設定・COMの記憶はコードの内容になります。</p>';
-        $('sum').hidden = false; $('applyrow').hidden = false;
-        setMsg($('inmsg'), '内容を確認して「この内容で引き継ぐ」を押してください');
-      } catch (e) {
-        var m = (e && e.message) || 'コードを読み込めませんでした';
-        setMsg($('inmsg'), m, true);
-        showResult(false, '<p class="tx-result-err">' + esc(m) + '</p><p class="tx-result-note">記録は何も変わっていません。発行したコードを最初から最後まで全部コピーして、もう一度貼り付けてください。</p>');
-      }
+    $('in-id').addEventListener('input', function () {
+      var v = normId(this.value).slice(0, 8);
+      this.value = v.length > 4 ? fmtId(v) : v;
     });
-    $('btn-apply').addEventListener('click', function () {
-      if (!pending) return;
+    $('in-pin').addEventListener('input', function () { this.value = normPin(this.value).slice(0, 6); });
+    $('btn-restore').addEventListener('click', async function () {
+      var btn = this; btn.disabled = true; window.__nkTxBusy = true;
+      setMsg($('inmsg'), '復元中…');
       try {
-        var imp = pending.d;
-        var n = Object.keys(apply(imp)).length;
-        reset(); $('in').value = '';
-        setMsg($('inmsg'), '引き継ぎました（' + n + '項目）。ゲームを開くと反映されています。');
+        var r = await restoreId($('in-id').value, $('in-pin').value);
+        if (!r.ok) {
+          setMsg($('inmsg'), r.message || '復元できませんでした', true);
+          showResult(false, '<p class="tx-result-err">' + esc(r.message || '復元できませんでした') + '</p><p class="tx-result-note">記録は何も変わっていません。IDとPINを確かめてもう一度入力してください。</p>');
+          return;
+        }
+        $('in-id').value = ''; $('in-pin').value = '';
+        setMsg($('inmsg'), '復元しました。ゲームを開くと反映されています。');
         listHere();
-        showResult(true, restoredHtml(imp));
+        showResult(true, restoredHtml(r.imp));
       } catch (e) {
-        var m = '引き継げませんでした：' + (e && e.message || e);
+        var m = '復元できませんでした：' + (e && e.message || e);
         setMsg($('inmsg'), m, true);
         showResult(false, '<p class="tx-result-err">' + esc(m) + '</p><p class="tx-result-note">ブラウザの保存容量が足りないか、プライベートモードの可能性があります。</p>');
-      }
+      } finally { btn.disabled = false; window.__nkTxBusy = false; }
     });
   }
 
-  window.NikkukyuuTransfer = { GAMES: GAMES, collect: collect, group: group, merge: merge, encode: encode, decode: decode, apply: apply, BACKUP_KEY: BACKUP_KEY };
+  window.NikkukyuuTransfer = { issueId: issueId, restoreId: restoreId, TX_API: TX_API, GAMES: GAMES, collect: collect, group: group, merge: merge, encode: encode, decode: decode, apply: apply, BACKUP_KEY: BACKUP_KEY };
   if (document.getElementById('transfer-app')) {
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initPage); else initPage();
   }

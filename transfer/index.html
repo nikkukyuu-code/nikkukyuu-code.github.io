@@ -5,9 +5,9 @@
 <!--nk-autoupdate--><script>
 /* 自動更新: 新しい版が公開されたら、安全なとき（タイトル画面など・試合中でない）だけ自動で読み込み直す。記録(localStorage)には触れない。 */
 (function () {
-  var PAGE_LABEL = '2026-10-14 02:47:52';
+  var PAGE_LABEL = '2026-10-14 16:42:37';
   var URL = '/version.json', KEY = 'nkReloadFor:transfer', EVERY = 0;
-  function safe() { try { return !!(!location.hash && !document.getElementById('tx-result') && !((document.getElementById('in') || {}).value) && ((document.getElementById('out') || {}).hidden !== false) && !(document.activeElement && /^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName))); } catch (e) { return false; } }
+  function safe() { try { return !!(!location.hash && !document.getElementById('tx-result') && !((document.getElementById('in-id') || {}).value) && !((document.getElementById('in-pin') || {}).value) && ((document.getElementById('idcard') || {}).hidden !== false) && !window.__nkTxBusy && !(document.activeElement && /^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName))); } catch (e) { return false; } }
   var busy = false;
   function check() {
     if (busy || document.visibilityState === 'hidden' || !safe()) return;
@@ -28,8 +28,8 @@
 })();
 </script><!--/nk-autoupdate-->
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>引き継ぎ（全ゲーム共通コード） — nikkukyuu-code</title>
-<meta name="description" content="スペーストリックバトル・トリックハウスバトル・7GET将棋の記録を、1つのコードで別の端末に引き継げます。" />
+<title>引き継ぎ（全ゲーム共通） — nikkukyuu-code</title>
+<meta name="description" content="スペーストリックバトル・トリックハウスバトル・7GET将棋の記録を、短い引き継ぎIDで別の端末に引き継げます。" />
 <link rel="canonical" href="https://nikkukyuu-code.github.io/transfer/" />
 <meta name="robots" content="noindex" />
 <style>
@@ -96,6 +96,17 @@
   .easy-note b { color: #ffe07a; }
   .flash { animation: secFlash 1.2s ease-out; }
   @keyframes secFlash { 0% { box-shadow: 0 0 0 4px rgba(255, 210, 74, 0.9); } 100% { box-shadow: 0 0 0 0 rgba(255, 210, 74, 0); } }
+  button.big { min-height: 52px; font-size: 1.05rem; padding: 10px 22px; }
+  .idcard { margin: 10px 0 4px; padding: 12px; border-radius: 14px; border: 2px solid #ffd24a; background: rgba(0,0,0,0.35); }
+  .idrow { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; flex-wrap: wrap; padding: 4px 0; border-bottom: 1px dashed rgba(255,255,255,0.15); }
+  .idlab { color: var(--muted); font-size: 0.85rem; }
+  .idval { font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: clamp(1.6rem, 8vw, 2.2rem); letter-spacing: 0.08em; color: #ffe07a; user-select: all; }
+  .idval.pin { color: #9fe8ff; }
+  .idexp { margin: 6px 0 0; font-size: 0.82rem; color: #f0e6d0; }
+  .idform { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 6px 0 8px; }
+  .idform label { display: flex; flex-direction: column; gap: 4px; font-size: 0.85rem; color: var(--muted); min-width: 0; }
+  .idform input { width: 100%; box-sizing: border-box; min-height: 48px; padding: 8px 10px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.35); background: rgba(0,0,0,0.35); color: #fff; font: inherit; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 1.25rem; letter-spacing: 0.08em; text-transform: uppercase; }
+  @media (max-width: 380px) { .idform { grid-template-columns: 1fr; } }
   @media (max-width: 480px) {
     main { padding-top: 12px; }
     .nav { margin-bottom: 8px; }
@@ -128,20 +139,18 @@
     <a class="back" data-back hidden href="/">← ゲームに戻る</a>
     <a href="/">サイトトップ</a>
   </nav>
-  <h1>引き継ぎ（全ゲーム共通コード）</h1>
+  <h1>引き継ぎ（全ゲーム共通）</h1>
   <section class="easy" aria-labelledby="easy-title">
-    <h2 id="easy-title">かんたん引き継ぎ 3ステップ</h2>
+    <h2 id="easy-title">かんたん引き継ぎ 2ステップ</h2>
     <ol class="steps">
-      <li><span class="step-no" aria-hidden="true">1</span><span class="step-ic" aria-hidden="true">📋</span>
-        <div class="step-tx"><b>今の端末</b>で「コードを発行」を押して「コピー」<button type="button" class="step-btn" data-go="export">コードを発行へ ↓</button></div></li>
-      <li><span class="step-no" aria-hidden="true">2</span><span class="step-ic" aria-hidden="true">✉️</span>
-        <div class="step-tx">LINEの自分用トーク・メモ・メール・AirDropなどで<b>新しい端末に送る</b></div></li>
-      <li><span class="step-no" aria-hidden="true">3</span><span class="step-ic" aria-hidden="true">📲</span>
-        <div class="step-tx"><b>新しい端末</b>でこのページを開き、「コードを入力」に貼り付けて「この内容で引き継ぐ」<button type="button" class="step-btn" data-go="import">コードを入力へ ↓</button></div></li>
+      <li><span class="step-no" aria-hidden="true">1</span><span class="step-ic" aria-hidden="true">🔑</span>
+        <div class="step-tx"><b>今の端末</b>で「引き継ぎIDを発行」を押して、<b>IDと数字（PIN）</b>をメモかスクショ<button type="button" class="step-btn" data-go="export">発行へ ↓</button></div></li>
+      <li><span class="step-no" aria-hidden="true">2</span><span class="step-ic" aria-hidden="true">📲</span>
+        <div class="step-tx"><b>新しい端末</b>でこのページを開き、IDとPINを入れて「IDで復元」<button type="button" class="step-btn" data-go="import">復元へ ↓</button></div></li>
     </ol>
-    <p class="easy-note">※コードはとても長いので、<b>手で打たずに「コピー」→「貼り付け」</b>してください。<br>※新しい端末でも<b>同じサイト（nikkukyuu-code.github.io）</b>を開いてください。<br>※<b>コードは他の人に見せたり、SNSに投稿したりしないでください</b>（あなたの記録が他の人の端末に入ってしまいます）。</p>
+    <p class="easy-note">※IDは8文字（例：<b>AB2C-D3EF</b>）、PINは<b>6けたの数字</b>です。<br>※有効期限は<b>最後に発行してから90日</b>。もう一度押すと<b>同じIDのまま</b>最新の記録に更新されます。<br>※<b>IDとPINは他の人に教えないでください</b>。</p>
   </section>
-  <p class="lead">このサイトの<strong>すべてのゲームの記録</strong>（PT・ポイント・持っているキャラや家・デッキ・ランキング・設定・COMの記憶など）を<strong>1つのコード</strong>にまとめて、新しいスマホへ引き継げます。</p>
+  <p class="lead">このサイトの<strong>すべてのゲームの記録</strong>（PT・ポイント・持っているキャラや家・デッキ・ランキング・設定・COMの記憶など）を<strong>短い引き継ぎID</strong>にまとめて、新しいスマホへ引き継げます。</p>
   <div class="notice" role="note">
     <strong>⚠ 記録が消えることがあります：</strong>
     <ul>
@@ -149,8 +158,8 @@
       <li>ブラウザの履歴やデータを消したとき</li>
       <li>プライベートモードで遊んだとき</li>
     </ul>
-    <div class="home-tip"><p class="ht-h">📱 iPhoneは「ホーム画面に追加」で消えにくくなります</p><ol><li>Safariで遊びたいページを開く</li><li>画面下の共有ボタン（四角に上矢印のマーク）を押す</li><li>「ホーム画面に追加」を選ぶ</li><li>ホーム画面のアイコンから遊ぶ</li></ol><p class="ht-n">※ホーム画面から開いたときはSafariとは記録が別になるので、最初にSafariで引き継ぎコードを作り、ホーム画面から開いた方で貼り付けてください。</p></div>
-    スマホを買い替える前に、ここでコードを作って保存してください。
+    <div class="home-tip"><p class="ht-h">📱 iPhoneは「ホーム画面に追加」で消えにくくなります</p><ol><li>Safariで遊びたいページを開く</li><li>画面下の共有ボタン（四角に上矢印のマーク）を押す</li><li>「ホーム画面に追加」を選ぶ</li><li>ホーム画面のアイコンから遊ぶ</li></ol><p class="ht-n">※ホーム画面から開いたときはSafariとは記録が別になるので、最初にSafariで引き継ぎIDを発行し、ホーム画面から開いた方で「IDで復元」してください。</p></div>
+    スマホを買い替える前に、ここで引き継ぎIDを発行してメモしてください。
   </div>
 
   <section>
@@ -159,18 +168,25 @@
   </section>
 
   <section id="sec-export">
-    <h2>① コードを発行（控える・別の端末へ）</h2>
-    <div class="row"><button type="button" class="primary" id="btn-export">コードを発行</button><button type="button" id="btn-copy" disabled>コピー</button></div>
-    <textarea id="out" readonly hidden aria-label="発行したコード"></textarea>
+    <h2>① 引き継ぎIDを発行（今の端末）</h2>
+    <div class="row"><button type="button" class="primary big" id="btn-issue">引き継ぎIDを発行</button></div>
+    <div class="idcard" id="idcard" hidden>
+      <div class="idrow"><span class="idlab">引き継ぎID</span><b class="idval" id="id-val"></b></div>
+      <div class="idrow"><span class="idlab">PIN（数字）</span><b class="idval pin" id="pin-val"></b></div>
+      <p class="idexp" id="id-exp"></p>
+      <div class="row"><button type="button" id="btn-copyid">IDとPINをコピー</button></div>
+    </div>
     <p class="msg" id="outmsg"></p>
   </section>
 
   <section id="sec-import">
-    <h2>② コードを入力（この端末に引き継ぐ）</h2>
-    <textarea id="in" placeholder="発行したコードを貼り付け" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="コードを入力"></textarea>
-    <div class="row"><button type="button" id="btn-check">内容を確認</button></div>
-    <div class="sum" id="sum" hidden></div>
-    <div class="row" id="applyrow" hidden><button type="button" class="primary" id="btn-apply">この内容で引き継ぐ</button><button type="button" id="btn-cancel">やめる</button></div>
+    <h2>② IDで復元（新しい端末）</h2>
+    <div class="idform">
+      <label>引き継ぎID<input id="in-id" type="text" inputmode="text" maxlength="9" placeholder="AB2C-D3EF" autocomplete="off" autocapitalize="characters" spellcheck="false" /></label>
+      <label>PIN（6けた）<input id="in-pin" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="123456" autocomplete="off" /></label>
+    </div>
+    <div class="row"><button type="button" class="primary big" id="btn-restore">IDで復元</button></div>
+    <p class="muted">今の端末の記録は自動でバックアップされ、数値（PT・ポイント）は大きい方、持っているもの（キャラ・家）は両方、ベストタイムは速い方を残すので、記録が減ることはありません。</p>
     <p class="msg" id="inmsg"></p>
   </section>
 
@@ -188,6 +204,6 @@
   <nav class="nav"><a class="back" data-back hidden href="/">← ゲームに戻る</a><a href="/">サイトトップ</a></nav>
   <footer><a href="/privacy.html">プライバシーポリシー</a></footer>
 </main>
-<script src="transfer.js?v=20261014024752"></script>
+<script src="transfer.js?v=20261014164237"></script>
 </body>
 </html>
