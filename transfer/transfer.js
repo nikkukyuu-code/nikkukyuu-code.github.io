@@ -186,6 +186,13 @@
     if (hasImpId) return b != null && b !== '' ? b : a;
     return a != null && a !== '' ? a : b;
   }
+  function spaceBestStrong(a, b) {
+    // 強い・1試合最高PT {v:1, pt, at, src}: keep the higher pt (never decreases)
+    var p = function (s) { var o = json(s, null); var n = o && typeof o === 'object' ? Math.floor(Number(o.pt) || 0) : Math.floor(num(s) || 0); return n > 0 ? n : 0; };
+    if (!p(b)) return a != null ? a : b;
+    if (!p(a)) return b;
+    return p(b) > p(a) ? b : a;
+  }
   function spaceRankKey(a, b, ctx) {
     // Ranking identity moves as a set: if the code carries an id, take the code's id/secret/nickname;
     // otherwise keep this device's (never blank out an existing ranking account).
@@ -206,6 +213,8 @@
         shootingOnline_tutorialDone: 'or',
         shootingOnline_comRecord: spaceComRecord, // COM対戦の勝敗（難易度ごとに試合数の多い方）
         shootingOnline_comRecord_bak: spaceComRecord,
+        shootingOnline_bestStrongMatch: spaceBestStrong, // 強いCOM戦の自己ベスト（1試合最高PT・大きい方）
+        shootingOnline_bestStrongMatch_bak: spaceBestStrong,
         // 世界ランキング: プレイヤーID・秘密キー・ニックネームは3つ一緒に移す（コード側の本人情報）
         shootingOnline_rankId: spaceRankKey,
         shootingOnline_rankId_bak: spaceRankKey,
@@ -222,6 +231,8 @@
           var line = function (lab, s) { var w = Math.floor(Number(s && s.w) || 0), l = Math.floor(Number(s && s.l) || 0); return lab + ' ' + w + '勝' + l + '敗'; };
           out.push('COM対戦 ' + line('普通', r.normal) + '・' + line('強い', r.strong));
         }
+        var bs = json(d.shootingOnline_bestStrongMatch || d.shootingOnline_bestStrongMatch_bak || 'null', null);
+        if (bs && Number(bs.pt) > 0) out.push('強いCOM戦の自己ベスト ' + Math.floor(Number(bs.pt)).toLocaleString('ja-JP') + 'PT');
         var nick = d.shootingOnline_nickname || d.shootingOnline_nickname_bak;
         if (d.shootingOnline_rankId || d.shootingOnline_rankId_bak) out.push('ランキング名 ' + (nick || '名無し') + '（メダルも引き継ぎ）');
         return out;
