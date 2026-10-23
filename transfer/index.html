@@ -5,7 +5,7 @@
 <!--nk-autoupdate--><script>
 /* 自動更新: 新しい版が公開されたら、安全なとき（タイトル画面など・試合中でない）だけ自動で読み込み直す。記録(localStorage)には触れない。 */
 (function () {
-  var PAGE_LABEL = '2026-10-23 19:21:12';
+  var PAGE_LABEL = '2026-10-24 08:50:03';
   var URL = '/version.json', KEY = 'nkReloadFor:transfer', EVERY = 0;
   function safe() { try { return !!(!location.hash && !document.getElementById('tx-result') && !((document.getElementById('in-id') || {}).value) && !((document.getElementById('in-pin') || {}).value) && ((document.getElementById('idcard') || {}).hidden !== false) && !window.__nkTxBusy && !(document.activeElement && /^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName))); } catch (e) { return false; } }
   var busy = false;
