@@ -5,7 +5,7 @@
 <!--nk-autoupdate--><script>
 /* 自動更新: 新しい版が公開されたら、安全なとき（タイトル画面など・試合中でない）だけ自動で読み込み直す。記録(localStorage)には触れない。 */
 (function () {
-  var PAGE_LABEL = '2026-10-24 08:50:03';
+  var PAGE_LABEL = '2026-10-24 08:51:37';
   var URL = '/version.json', KEY = 'nkReloadFor:portal-top', EVERY = 0;
   function safe() { try { return !!(true); } catch (e) { return false; } }
   var busy = false;
@@ -303,6 +303,7 @@
     text-decoration: none;
   }
   footer a:hover { text-decoration: underline; }
+  footer a { white-space: nowrap; }
   footer .site-meta { margin: 8px auto 0; font-size: 0.74rem; opacity: 0.8; white-space: nowrap; font-variant-numeric: tabular-nums; }
   footer .site-meta .meta-sep { margin: 0 6px; opacity: 0.6; }
 
@@ -438,7 +439,7 @@
     <a href="mailto:nikkukyuu@gmail.com">お問い合わせ</a>
     ・
     <a href="https://freegame-mugen.jp/cms/mt-cp.cgi?__mode=view&amp;blog_id=1&amp;id=13413" target="_blank" rel="noopener">フリーゲーム夢現</a>
-    <p class="site-meta"><span id="site-version">2026-10-24 08:50:03</span><span class="meta-sep">·</span><span id="site-visits" aria-live="polite">アクセス …</span></p>
+    <p class="site-meta"><span id="site-version">2026-10-24 08:51:37</span><span class="meta-sep">·</span><span id="site-visits" aria-live="polite">アクセス …</span></p>
   </footer>
 
 <script>
