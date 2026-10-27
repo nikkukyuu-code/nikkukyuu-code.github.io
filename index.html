@@ -62,7 +62,7 @@ document.addEventListener('click', function (e) {
 <!--nk-autoupdate--><script>
 /* 自動更新: 新しい版が公開されたら、安全なとき（タイトル画面など・試合中でない）だけ自動で読み込み直す。記録(localStorage)には触れない。 */
 (function () {
-  var PAGE_LABEL = '2026-10-27 10:54:07';
+  var PAGE_LABEL = '2026-10-27 11:11:12';
   var URL = '/version.json', KEY = 'nkReloadFor:portal-top', EVERY = 0;
   function safe() { try { return !!(true); } catch (e) { return false; } }
   var busy = false;
@@ -425,6 +425,41 @@ document.addEventListener('click', function (e) {
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 <meta name="apple-mobile-web-app-title" content="対戦ゲーム" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
+<script>
+/* 訪問ログ (nikkukyuu-visitlog): 1タブ1回 + 人らしい訪問/対戦開始の印。IPや個人情報は送らない。失敗しても何もしない。 */
+(function () {
+  try {
+    var EP = 'https://nikkukyuu-visitlog.nikkukyuu.workers.dev/v', P = 'portal';
+    var sid = sessionStorage.getItem('nkVisitSid');
+    if (!sid) { sid = (Math.random().toString(36).slice(2) + Date.now().toString(36)).replace(/[^a-z0-9]/g, '').slice(0, 24); sessionStorage.setItem('nkVisitSid', sid); }
+    function send(o) {
+      try {
+        o.p = P; o.sid = sid; var b = JSON.stringify(o);
+        if (navigator.sendBeacon && navigator.sendBeacon(EP, new Blob([b], { type: 'text/plain' }))) return;
+        fetch(EP, { method: 'POST', body: b, keepalive: true, mode: 'cors', headers: { 'Content-Type': 'text/plain' } }).catch(function () {});
+      } catch (e) {}
+    }
+    function once(k, o) { try { if (sessionStorage.getItem(k)) return; sessionStorage.setItem(k, '1'); } catch (e) { return; } send(o); }
+    var ref = ''; try { if (document.referrer) { var u = new URL(document.referrer); ref = u.origin + u.pathname; } } catch (e) {}
+    var yt = ''; try { yt = sessionStorage.getItem('nkSrcYt') === '1' || /[?&]src=yt(&|$)/.test(location.search) ? 'yt' : ''; } catch (e) {}
+    setTimeout(function () { once('nkVL:' + P, { ev: 'load', s: yt, r: ref, wd: navigator.webdriver ? 1 : 0 }); }, 0);
+    window.__nkVisitBattle = function () { once('nkVLb:' + P, { ev: 'battle' }); };
+    var done = false, t = null, EV = ['pointerdown', 'touchstart', 'keydown', 'scroll', 'wheel'];
+    function fire() {
+      if (done || document.visibilityState !== 'visible') return;
+      done = true; clearTimeout(t);
+      EV.forEach(function (e) { removeEventListener(e, onAct, true); });
+      once('nkVLh:' + P, { ev: 'human' });
+    }
+    function onAct(e) { if (e.isTrusted !== false) fire(); }
+    function arm() { clearTimeout(t); if (!done && document.visibilityState === 'visible') t = setTimeout(fire, 5000); }
+    if (sessionStorage.getItem('nkVLh:' + P)) return;
+    EV.forEach(function (e) { addEventListener(e, onAct, { capture: true, passive: true }); });
+    document.addEventListener('visibilitychange', arm);
+    arm();
+  } catch (e) {}
+})();
+</script>
 </head>
 <body>
   <div class="noise" aria-hidden="true"></div>
