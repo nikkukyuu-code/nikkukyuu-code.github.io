@@ -1,11 +1,43 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+<script>
+/* YouTube流入の目印 (?src=yt): 別キー nikkukyuu/portal-top-yt に1タブ1回だけ記録。表示なし。通常カウンタは変更なし。 */
+(function () {
+  try {
+    var sp = new URLSearchParams(location.search);
+    if (sp.get('src') === 'yt') {
+      sessionStorage.setItem('nkSrcYt', '1');
+      sp.delete('src');
+      var qs = sp.toString();
+      history.replaceState(history.state, '', location.pathname + (qs ? '?' + qs : '') + location.hash);
+    }
+    if (sessionStorage.getItem('nkSrcYt') !== '1' || navigator.webdriver) return;
+    var HK = 'nkYtHit:portal-top-yt';
+    if (sessionStorage.getItem(HK)) return;
+    sessionStorage.setItem(HK, '1');
+    fetch('https://abacus.jasoncameron.dev/hit/nikkukyuu/portal-top-yt?_=' + Date.now(), { cache: 'no-store', mode: 'cors' }).catch(function () {});
+  } catch (e) {}
+})();
+</script>
+<script>
+/* YouTube流入タブ: ゲームへのリンクにも src=yt を付ける（新しいタブでも目印が残る） */
+document.addEventListener('click', function (e) {
+  try {
+    if (sessionStorage.getItem('nkSrcYt') !== '1') return;
+    var a = e.target && e.target.closest && e.target.closest('a[href]');
+    if (!a) return;
+    var u = new URL(a.href, location.href);
+    if ((u.origin !== location.origin && u.hostname !== 'nikkukyuu-code.github.io') || u.pathname.indexOf('/shooting-online/') !== 0 || u.searchParams.get('src')) return;
+    u.searchParams.set('src', 'yt'); a.href = u.href;
+  } catch (err) {}
+}, true);
+</script>
 <meta charset="UTF-8" />
 <!--nk-autoupdate--><script>
 /* 自動更新: 新しい版が公開されたら、安全なとき（タイトル画面など・試合中でない）だけ自動で読み込み直す。記録(localStorage)には触れない。 */
 (function () {
-  var PAGE_LABEL = '2026-10-26 03:02:20';
+  var PAGE_LABEL = '2026-10-27 10:38:37';
   var URL = '/version.json', KEY = 'nkReloadFor:portal-top', EVERY = 0;
   function safe() { try { return !!(true); } catch (e) { return false; } }
   var busy = false;
