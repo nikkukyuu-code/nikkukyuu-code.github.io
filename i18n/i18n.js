@@ -53,6 +53,7 @@
     var keys = Object.keys(srcs[0]);
     Object.keys(srcs[1]).forEach(function (k) { if (!(k in srcs[0])) keys.push(k); });
     keys.forEach(function (k) {
+      if (k.indexOf('html:') === 0) return;
       if (/\{\d+\}/.test(k)) {
         var parts = k.split(/\{(\d+)\}/), re = '^', idx = [];
         for (var i = 0; i < parts.length; i++) {
@@ -66,7 +67,9 @@
     frags.sort(function (a, b) { return b.length - a.length; });
     var fre = null;
     if (frags.length) fre = new RegExp(frags.map(function (s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|'), 'g');
-    compiled = { pats: pats, fre: fre };
+    var htm = {};
+    keys.forEach(function (k) { if (k.indexOf('html:') === 0) htm[k.slice(5).replace(/<[^>]*>/g, '')] = k.slice(5); });
+    compiled = { pats: pats, fre: fre, htm: htm };
   }
   function look(k) {
     var d = NK.dicts[lang]; if (d && d[k] != null && d[k] !== '') return d[k] === '\u200b' ? '' : d[k];
@@ -200,14 +203,23 @@
       s2.last = w2;
     }
   }
+  function doHtml(el) {
+    if (lang === 'ja' || !el.children.length || el.children.length > 6) return false;
+    if (!compiled) build();
+    var t = el.textContent; if (t.length > 400 || !JP.test(t)) return false;
+    var k = compiled.htm[t.trim()]; if (!k || el.innerHTML.trim() !== k) return false;
+    var v = look('html:' + k); if (v == null) return false;
+    el.innerHTML = v; qfit(el); return true;
+  }
   function walk(root) {
     if (!root) return;
     if (root.nodeType === 3) { if (!skip(root.parentNode)) doText(root); return; }
     if (root.nodeType !== 1 && root.nodeType !== 9 && root.nodeType !== 11) return;
     if (root.nodeType === 1) { if (skip(root)) return; doAttrs(root); }
+    if (root.nodeType === 1 && doHtml(root)) return;
     var tw = document.createTreeWalker(root, 5, null), n;
     while ((n = tw.nextNode())) {
-      if (n.nodeType === 1) { if (n.closest(SKIPSEL)) continue; doAttrs(n); }
+      if (n.nodeType === 1) { if (n.closest(SKIPSEL)) continue; doAttrs(n); doHtml(n); }
       else if (!skip(n.parentNode)) doText(n);
     }
   }
