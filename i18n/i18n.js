@@ -46,6 +46,7 @@
   NK.add = function (code, dict) { NK.dicts[code] = dict; };
 
   var JP = /[\u3040-\u30fa\u30fc-\u30ff\u3400-\u9fff\uff66-\uff9f]/;
+  var KANA = /[\u3040-\u30fa\u30fc-\u30ff\uff66-\uff9f]/, ZH = lang === 'zh-Hans' || lang === 'zh-Hant';
   var cache = new Map(), compiled = null;
   function build() {
     var pats = [], frags = [];
@@ -116,17 +117,17 @@
       for (var q = 0; q < full.length; q++) if (full[q].length > pre.length && full[q].indexOf(pre) === 0) { var fv = look(full[q]); if (fv != null) return fv; }
     }
     // Split on separators and translate each piece.
-    var parts = s.split(/(【|】|・|　|：|: |\s\/\s|（|）|\(|\)|「|」|、|。|！|？)/);
+    var parts = s.split(/(【|】|・|／|　|：|: |\s\/\s|（|）|\(|\)|「|」|、|。|！|？)/);
     if (parts.length > 1) {
       var allOk = true;
       for (var pi = 0; pi < parts.length; pi += 2) {
         var seg = parts[pi]; if (!seg || !JP.test(seg)) continue;
         var st = seg.trim(), tv = look(st);
-        if (tv == null) { var sub = core2(st); if (sub !== st && !JP.test(sub)) tv = sub; }
+        if (tv == null) { var sub = core2(st); if (sub !== st && !(ZH ? KANA : JP).test(sub)) tv = sub; }
         if (tv == null) { allOk = false; } else parts[pi] = seg.replace(st, tv);
       }
-      var SEP = { '【': '[', '】': ']', '・': ' · ', '　': ' ', '：': ': ', '（': ' (', '）': ')', '「': '"', '」': '"', '、': ', ', '。': '. ', '！': '! ', '？': '? ' };
-      if (lang === 'zh-Hans' || lang === 'zh-Hant') SEP = {};
+      var SEP = { '【': '[', '】': ']', '・': ' · ', '　': ' ', '：': ': ', '（': ' (', '）': ')', '「': '"', '」': '"', '、': ', ', '。': '. ', '！': '! ', '？': '? ', '／': ' / ' };
+      if (lang === 'zh-Hans' || lang === 'zh-Hant') SEP = { '・': '·' };
       for (var pj = 1; pj < parts.length; pj += 2) if (SEP[parts[pj]] != null) parts[pj] = SEP[parts[pj]];
       var joined = parts.join('').replace(/ {2,}/g, ' ').replace(/\( /g, '(').trim();
       if (allOk) return joined;
