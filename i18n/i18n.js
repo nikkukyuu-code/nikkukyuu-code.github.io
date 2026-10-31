@@ -331,6 +331,7 @@
     st.textContent =
       '.nk-lang-wrap{position:relative;display:inline-flex;vertical-align:middle;margin-right:.4em;z-index:30;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans",sans-serif;letter-spacing:0;text-transform:none}' +
       '.nk-lang-btn{display:inline-flex;align-items:center;gap:.25em;font-size:13px;font-weight:900;line-height:1.1;padding:4px 9px;border-radius:999px;border:2px solid #fff;color:#1b1300;background:linear-gradient(180deg,#ffe95c,#ffb300);box-shadow:0 0 10px rgba(255,214,0,.9),0 2px 4px rgba(0,0,0,.45);cursor:pointer;white-space:nowrap;text-shadow:none;-webkit-text-fill-color:#1b1300;font-style:normal;animation:nkLangGlow 1.4s ease-in-out infinite alternate;pointer-events:auto;max-width:42vw;overflow:hidden;text-overflow:ellipsis}' +
+      '.nk-lang-lbl{position:absolute;left:50%;bottom:100%;transform:translateX(-50%);margin-bottom:1px;font-size:9px;line-height:1;font-weight:800;letter-spacing:.03em;color:#fff;-webkit-text-fill-color:#fff;text-shadow:0 1px 2px #000,0 0 3px #000;white-space:nowrap;pointer-events:none;font-style:normal;text-transform:none}' +
       '.nk-lang-btn .nk-g{font-size:15px}.nk-lang-btn .nk-s{display:none}' +
       '@media (max-width:599px){.nk-lang-btn{font-size:12px;padding:3px 7px}.nk-lang-btn .nk-n{display:none}.nk-lang-btn .nk-s{display:inline}}' +
       (cfg.css || '') +
@@ -344,9 +345,11 @@
   function makePicker() {
     var wrap = document.createElement('span');
     wrap.className = 'nk-lang-wrap'; wrap.setAttribute('data-nk-noi18n', '');
+    // fixed English caption above the picker (never translated: wrap is data-nk-noi18n)
+    var lbl = document.createElement('span'); lbl.className = 'nk-lang-lbl'; lbl.setAttribute('aria-hidden', 'true'); lbl.setAttribute('translate', 'no'); lbl.textContent = 'Language'; wrap.appendChild(lbl);
     var b = document.createElement('button');
     b.type = 'button'; b.className = 'nk-lang-btn'; b.setAttribute('aria-haspopup', 'listbox');
-    b.setAttribute('aria-label', 'Language / 言語');
+    b.setAttribute('aria-label', 'Language');
     b.innerHTML = '<span class="nk-g">🌐</span><span class="nk-n"></span><span class="nk-s"></span>';
     b.querySelector('.nk-n').textContent = nameOf(lang);
     b.querySelector('.nk-s').textContent = SHORT[lang] || lang;
