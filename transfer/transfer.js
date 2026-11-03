@@ -193,6 +193,15 @@
     if (!p(a)) return b;
     return p(b) > p(a) ? b : a;
   }
+  function spaceMissions(a, b) {
+    // ミッション {cleared: {id: 初回クリア時刻}}: 両方のクリア済みを合わせる（報酬の二重取り防止・早い時刻を残す）
+    var x = json(a, {}), y = json(b, {});
+    var O = function (v) { return v && typeof v === 'object' && !Array.isArray(v) ? v : {}; };
+    var c = {};
+    [O(O(x).cleared), O(O(y).cleared)].forEach(function (m) { Object.keys(m).forEach(function (k) { var t = Number(m[k]) || 1; c[k] = c[k] ? Math.min(c[k], t) : t; }); });
+    if (!Object.keys(c).length && a == null && b == null) return a;
+    return JSON.stringify(Object.assign({}, O(x), O(y), { cleared: c }));
+  }
   function spaceRankKey(a, b, ctx) {
     // Ranking identity moves as a set: if the code carries an id, take the code's id/secret/nickname;
     // otherwise keep this device's (never blank out an existing ranking account).
@@ -215,6 +224,8 @@
         shootingOnline_comRecord_bak: spaceComRecord,
         shootingOnline_bestStrongMatch: spaceBestStrong, // 強いCOM戦の自己ベスト（1試合最高PT・大きい方）
         shootingOnline_bestStrongMatch_bak: spaceBestStrong,
+        shootingOnline_missions: spaceMissions, // ミッションのクリア記録（初回報酬受け取り済み）
+        shootingOnline_news_20261103_mission: 'or', // 更新情報を閉じた印
         // 世界ランキング: プレイヤーID・秘密キー・ニックネームは3つ一緒に移す（コード側の本人情報）
         shootingOnline_rankId: spaceRankKey,
         shootingOnline_rankId_bak: spaceRankKey,
@@ -233,6 +244,8 @@
         }
         var bs = json(d.shootingOnline_bestStrongMatch || d.shootingOnline_bestStrongMatch_bak || 'null', null);
         if (bs && Number(bs.pt) > 0) out.push('強いCOM戦の自己ベスト ' + Math.floor(Number(bs.pt)).toLocaleString('ja-JP') + 'PT');
+        var ms = json(d.shootingOnline_missions || 'null', null);
+        if (ms && ms.cleared && typeof ms.cleared === 'object' && Object.keys(ms.cleared).length) out.push('ミッション クリア ' + Object.keys(ms.cleared).length + '個');
         var nick = d.shootingOnline_nickname || d.shootingOnline_nickname_bak;
         if (d.shootingOnline_rankId || d.shootingOnline_rankId_bak) out.push('ランキング名 ' + (nick || '名無し') + '（メダルも引き継ぎ）');
         return out;
