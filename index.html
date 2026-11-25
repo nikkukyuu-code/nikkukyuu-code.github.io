@@ -53,17 +53,19 @@ document.addEventListener('click', function (e) {
     var a = e.target && e.target.closest && e.target.closest('a[href]');
     if (!a) return;
     var u = new URL(a.href, location.href);
-    if ((u.origin !== location.origin && u.hostname !== 'nikkukyuu-code.github.io') || u.pathname.indexOf('/shooting-online/') !== 0 || u.searchParams.get('src')) return;
+    var path = u.pathname;
+    var isGame = path.indexOf('/shooting-online/') === 0 || path.indexOf('/househouse/') === 0 || path.indexOf('/shogi/') === 0;
+    if ((u.origin !== location.origin && u.hostname !== 'nikkukyuu-code.github.io') || !isGame || u.searchParams.get('src')) return;
     u.searchParams.set('src', 'yt'); a.href = u.href;
   } catch (err) {}
 }, true);
 </script>
 <meta charset="UTF-8" />
-<script>window.NK_I18N_CFG={"base": "", "anchors": [["h1", "prepend"]]};</script><script src="i18n/i18n.js?v=20261031124512"></script>
+<script>window.NK_I18N_CFG={"base": "", "anchors": [["h1", "prepend"]]};</script><script src="i18n/i18n.js?v=20261125121530"></script>
 <!--nk-autoupdate--><script>
 /* 自動更新: 新しい版が公開されたら、安全なとき（タイトル画面など・試合中でない）だけ自動で読み込み直す。記録(localStorage)には触れない。 */
 (function () {
-  var PAGE_LABEL = '2026-10-31 12:45:12';
+  var PAGE_LABEL = '2026-11-25 12:15:30';
   var URL = '/version.json', KEY = 'nkReloadFor:portal-top', EVERY = 0;
   function safe() { try { return !!(true); } catch (e) { return false; } }
   var busy = false;
@@ -492,17 +494,17 @@ document.addEventListener('click', function (e) {
 
 <article class="card" data-game="house">
         <div class="card-body">
-          <h3>トリックハウスバトル <span class="visit-count" data-visit="house" aria-live="polite"></span></h3>
+          <h3><a class="card-title-link" href="https://nikkukyuu-code.github.io/househouse/game/">トリックハウスバトル</a> <span class="visit-count" data-visit="house" aria-live="polite"></span></h3>
           <p class="blurb">スマホ向けの2人対戦ゲームです。自分の家に罠と宝箱を仕掛けて守り、相手の家に入って宝箱を探します。</p>
-          <a class="play" href="./househouse/">遊ぶ</a>
+          <a class="play" href="https://nikkukyuu-code.github.io/househouse/game/" aria-label="トリックハウスバトルを遊ぶ">遊ぶ</a>
         </div>
       </article>
 
 <article class="card" data-game="shogi">
         <div class="card-body">
-          <h3>7GET将棋 <span class="visit-count" data-visit="shogi" aria-live="polite"></span></h3>
+          <h3><a class="card-title-link" href="https://nikkukyuu-code.github.io/shogi/game/">7GET将棋</a> <span class="visit-count" data-visit="shogi" aria-live="polite"></span></h3>
           <p class="blurb">将棋の勝利条件に、歩以外の駒を7枚取る条件を加えたゲームです。玉取りでも勝ち。AI対戦とネット対戦ができます。</p>
-          <a class="play" href="./shogi/">遊ぶ</a>
+          <a class="play" href="https://nikkukyuu-code.github.io/shogi/game/" aria-label="7GET将棋を遊ぶ">遊ぶ</a>
         </div>
       </article>
     
@@ -522,7 +524,7 @@ document.addEventListener('click', function (e) {
     </section>
     <section class="about">
       <h2>このサイトについて</h2>
-      <p>個人がブラウザ向けに制作したゲームの公開用ページです。「遊ぶ」から各ゲームを開けます。ルール説明があるゲームは、遊び方を見てから本体へ進めます。</p>
+      <p>個人がブラウザ向けに制作したゲームの公開用ページです。「遊ぶ」から各ゲームを開けます。</p>
     </section>
   </main>
   <footer>
@@ -531,7 +533,7 @@ document.addEventListener('click', function (e) {
     <a href="mailto:nikkukyuu@gmail.com">お問い合わせ</a>
     ·
     <a href="https://freegame-mugen.jp/cms/mt-cp.cgi?__mode=view&amp;blog_id=1&amp;id=13413" target="_blank" rel="noopener">フリーゲーム夢現</a>
-    <p class="site-meta"><span class="ver-pre" style="white-space:nowrap">バージョン <span id="site-version">2026-10-31 12:45:12</span></span><span class="meta-sep">·</span><span id="site-visits" aria-live="polite">アクセス …</span></p>
+    <p class="site-meta"><span class="ver-pre" style="white-space:nowrap">バージョン <span id="site-version">2026-11-25 12:15:30</span></span><span class="meta-sep">·</span><span id="site-visits" aria-live="polite">アクセス …</span></p>
   </footer>
 
 <script>
